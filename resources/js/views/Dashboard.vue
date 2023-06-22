@@ -1,14 +1,25 @@
 <template>
-    <div>
-        <Nav />
-        <router-view />
-
-        <!-- <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
-        <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> -->
+    <div class="mt-20 px-2">
+      <div class="grid grid-cols-4 gap-2">
+        <div class="col-span-1">
+          <div class="border p-4 text-center w-full rounded text-gray-500">
+            <i class="fa-solid fa-user text-5xl mb-4"></i>
+            <p>363</p>
+          </div>
+        </div>
+        <div>
+          s
+        </div>
+        <div>
+          s
+        </div>
+        <div>
+          s
+        </div>
+      </div>
     </div>
 </template>
 <script>
-import Nav from './Nav.vue'
 
 
 export default {
@@ -18,7 +29,7 @@ export default {
         }
     },
     components: {
-        Nav,
+
     },
 
     props: {
