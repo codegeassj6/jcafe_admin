@@ -1,5 +1,5 @@
 <template>
-    <div class="w-64 fixed h-full">
+    <div class="w-64 fixed h-full z-10">
         <div class="mt-16 relative h-full bg-slate-700">
             <div class="flex flex-col">
                 <div class="">
@@ -28,7 +28,7 @@
                   </router-link>
                 </div>
                 <div class="">
-                  <router-link to="/" class="w-full flex text-xl flex-row items-center gap-2 text-white border-0 py-4 ps-4 focus:outline-none hover:bg-indigo-600">
+                  <router-link to="/orders" class="w-full flex text-xl flex-row items-center gap-2 text-white border-0 py-4 ps-4 focus:outline-none hover:bg-indigo-600">
                     <i class="fa-solid fa-cart-shopping"></i> Orders
                   </router-link>
                 </div>

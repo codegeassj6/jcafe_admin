@@ -30,9 +30,14 @@
           >
             <div class="py-2 text-sm text-gray-700">
               <a
+                role="button"
+                class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
+                >Add Games</a
+              >
+              <a
                 href="/integrations"
                 class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
-                >Delete</a
+                >Delete Games</a
               >
             </div>
           </PopoverPanel>
@@ -85,8 +90,6 @@
             </th>
             <th scope="col" class="px-2 py-3">ID</th>
             <th scope="col" class="px-6 py-3">Name</th>
-            <th scope="col" class="px-6 py-3">Details</th>
-            <th scope="col" class="px-6 py-3">Status</th>
             <th scope="col" class="px-6 py-3">Action</th>
           </tr>
         </thead>
@@ -110,26 +113,13 @@
               <div class="text-base text-dark font-semibold">1</div>
             </td>
             <td class="px-6 py-4">
-              <div class="text-base text-dark font-semibold">Bonnie Green</div>
-            </td>
-            <td class="px-6 py-4">
-              <p>Role: Client</p>
-              <p>Birthday: 09/092/1994</p>
-              <p>Lapu lapu San Pedro Panabo City</p>
-              <p>Lapu lapu San Pedro Panabo City</p>
-              <p>Lapu lapu San Pedro Panabo City</p>
-            </td>
-            <td class="px-6 py-4">
-              <div class="flex items-center">
-                <div class="h-2.5 w-2.5 rounded-full bg-green-500 mr-2"></div>
-                Online
-              </div>
+              <div class="text-base text-dark font-semibold">God of War 4</div>
             </td>
             <td class="px-6 py-4">
               <a
                 href="#"
                 class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                >Edit user
+                >Edit
               </a>
             </td>
           </tr>

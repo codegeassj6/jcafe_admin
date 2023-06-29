@@ -1,82 +1,126 @@
 <template>
-    <div class="mt-20 px-2">
-      <div class="grid grid-cols-4 gap-2">
-        <div class="col-span-1">
-          <div class="border p-4 text-center w-full rounded text-gray-500">
-            <i class="fa-solid fa-user text-5xl mb-4"></i>
-            <p>363</p>
-          </div>
+  <div class="mt-20 px-4">
+    <div class="grid grid-cols-2 gap-4">
+      <div class="border shadow-lg rounded">
+        <div class="p-4 border-b text-center bg-indigo-700 text-white font-bold font-lg">
+          Users
         </div>
-        <div>
-          s
+        <div class="bg-indigo-50 p-4">
+          <Bar :data="bar.data" :options="bar.options" :style="chartStyles" />
         </div>
-        <div>
-          s
+      </div>
+      <div class="border shadow-lg rounded">
+        <div class="p-4 border-b text-center bg-indigo-700 text-white font-bold font-lg">
+          Orders
         </div>
-        <div>
-          s
+        <div class="bg-indigo-50 p-4">
+          <Pie :data="pie.data" :options="pie.options" :style="chartStyles" />
         </div>
       </div>
     </div>
+  </div>
 </template>
-<script>
+<script lang="ts">
+import {
+  Chart as ChartJS,
+  Title,
+  Tooltip,
+  Legend,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  ArcElement,
+} from "chart.js";
+import { Bar } from "vue-chartjs";
+import { Pie } from 'vue-chartjs'
 
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement
+);
 
 export default {
-    data() {
-        return {
+  data() {
+    return {
+      bar: {
+        data: {
+          labels: ["January", "February", "March"],
+          datasets: [{ data: [40, 20, 12] }],
+        },
+        options: {
+          responsive: true,
+        },
+      },
 
+      pie: {
+        data: {
+          labels: ['VueJs', 'EmberJs', 'ReactJs', 'AngularJs'],
+          datasets: [
+            {
+              backgroundColor: ['#41B883', '#E46651', '#00D8FF', '#DD1B16'],
+              data: [40, 20, 80, 10]
+            }
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false
         }
+      }
+
+
+
+    };
+  },
+  components: {
+    Bar,
+    Pie
+  },
+
+  props: {},
+
+  computed: {
+    chartStyles() {
+      return {
+        height: `${500}px`,
+        position: "relative",
+      };
     },
-    components: {
+  },
 
-    },
+  methods: {},
 
-    props: {
-
-    },
-
-    computed: {
-
-    },
-
-    methods: {
-
-    },
-
-    watch: {
-        $data: {
-            handler: function(val, oldVal) {
-                console.log('watcher: ',val);
-            },
-            deep: true
-        },
-
-        $props: {
-            handler: function(val, oldVal) {
-                console.log('watcher: ',val);
-            },
-            deep: true
-        },
-        some_prop: function() {
-            //do something if some_prop updated
-        },
+  watch: {
+    $data: {
+      handler: function (val, oldVal) {
+        console.log("watcher: ", val);
+      },
+      deep: true,
     },
 
-    updated() {
-
+    $props: {
+      handler: function (val, oldVal) {
+        console.log("watcher: ", val);
+      },
+      deep: true,
     },
-
-    beforeMounted() {
-
+    some_prop: function () {
+      //do something if some_prop updated
     },
+  },
 
-    mounted() {
+  updated() {},
 
-    },
-}
+  beforeMounted() {},
+
+  mounted() {},
+};
 </script>
 
 <style scoped>
-
 </style>
