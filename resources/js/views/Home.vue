@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="!user">
+    <div>
       <div
         class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8 mt-36"
       >
@@ -76,17 +76,9 @@
         </div>
       </div>
     </div>
-
-    <div class="flex flex-row" v-else>
-      <Aside />
-      <div class="ml-64 w-full">
-        <router-view />
-      </div>
-    </div>
   </div>
 </template>
 <script>
-import Aside from "../components/Aside.vue";
 import { userStore } from "../stores/userStore";
 const user_store = userStore();
 
@@ -97,8 +89,10 @@ export default {
     };
   },
   components: {
-    Aside,
+
   },
+
+  name: "Home",
 
   props: {},
 
@@ -112,7 +106,7 @@ export default {
           email: this.$refs.email.value,
           password: this.$refs.password.value,
         },
-        url: `https://cyberhub.test/api/auth/login`,
+        url: `/api/auth/login`,
       })
         .then((res) => {
           user_store.$patch((state) => {
@@ -120,11 +114,13 @@ export default {
               access_token: res.data.access_token,
             });
           });
-          this.user = user_store.authUser;
-          axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.access_token}`
+          // this.user = user_store.authUser;
+          // axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.access_token}`
           this.$router.push("/dashboard");
         })
-        .catch((err) => {});
+        .catch((err) => {
+          console.log(err.response);
+        });
     },
   },
 

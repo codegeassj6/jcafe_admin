@@ -156,6 +156,9 @@ return [
     */
 
     'providers' => ServiceProvider::defaultProviders()->merge([
+        Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
+
+
         /*
          * Package Service Providers...
          */
@@ -183,6 +186,7 @@ return [
 
     'aliases' => Facade::defaultAliases()->merge([
         // 'Example' => App\Facades\Example::class,
+        'Carbon' => Carbon\Carbon::class,
     ])->toArray(),
 
 ];

@@ -1,0 +1,74 @@
+{
+    "_id": "1c3cf875-1165-43a7-81c3-3daf6a1ddb2a",
+    "colName": "jcafe_admin",
+    "created": "2023-07-03T19:14:52.784Z",
+    "sortNum": 10000,
+    "folders": [
+        {
+            "_id": "fd344218-6190-4d43-8fed-85ae637ba767",
+            "name": "Auth",
+            "containerId": "",
+            "created": "2023-07-03T19:20:22.796Z",
+            "sortNum": 20000
+        },
+        {
+            "_id": "de7729e7-8c8d-4556-b713-848cfd277572",
+            "name": "Dashboard",
+            "containerId": "",
+            "created": "2023-07-03T19:21:33.927Z",
+            "sortNum": 30000
+        }
+    ],
+    "requests": [
+        {
+            "_id": "473a926a-7abd-4018-ab45-8cf55cb1bb54",
+            "colId": "1c3cf875-1165-43a7-81c3-3daf6a1ddb2a",
+            "containerId": "fd344218-6190-4d43-8fed-85ae637ba767",
+            "name": "Login",
+            "url": "api/auth/login?email={{email}}&password={{password}}",
+            "method": "POST",
+            "sortNum": 10000,
+            "created": "2023-07-03T19:15:20.000Z",
+            "modified": "2023-07-03T19:18:42.929Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "email",
+                    "value": "{{email}}",
+                    "isPath": false
+                },
+                {
+                    "name": "password",
+                    "value": "{{password}}",
+                    "isPath": false
+                }
+            ],
+            "tests": []
+        },
+        {
+            "_id": "72696fc1-a5dc-401c-b0a4-44c6fdbf01e3",
+            "colId": "1c3cf875-1165-43a7-81c3-3daf6a1ddb2a",
+            "containerId": "de7729e7-8c8d-4556-b713-848cfd277572",
+            "name": "Index",
+            "url": "api/dashboard",
+            "method": "GET",
+            "sortNum": 10000,
+            "created": "2023-07-03T19:20:40.616Z",
+            "modified": "2023-07-03T19:20:51.393Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        }
+    ],
+    "settings": {
+        "headers": [
+            {
+                "name": "Authorization",
+                "value": "Bearer {{token}}"
+            }
+        ],
+        "options": {
+            "baseUrl": "http://jcafe_admin.test/"
+        }
+    }
+}
