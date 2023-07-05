@@ -2,7 +2,7 @@
   <div>
     <Aside />
 
-    <div class="pt-20 px-4 ml-64">
+    <div class="pt-20 px-4 ml-16 md:ml-64">
       <div class="relative overflow-x-auto shadow-md sm:rounded-lg p-4 border">
         <div
           class="flex items-center justify-between pb-4 bg-white dark:bg-gray-900"
@@ -129,7 +129,7 @@
                 <a
                   role="button"
                   class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                  @click="setIsOpen(true)"
+                  @click="setIsOpen(true, user)"
                   >Edit
                 </a>
               </td>
@@ -139,7 +139,7 @@
       </div>
     </div>
 
-    <Dialog :open="isOpen" @close="setIsOpen" class="z-50 bg-opacity-50 absolute bg-black w-full p-4 overflow-x-hidden overflow-y-auto inset-0 h-[calc(100%-1rem)] max-h-full">
+    <Dialog v-if="edit.user" :open="isOpen" @close="setIsOpen" class="z-50 bg-opacity-50 absolute bg-black w-full p-4 overflow-x-hidden overflow-y-auto inset-0 h-[calc(100%-1rem)] max-h-full">
     <DialogPanel class="relative w-full max-w-5xl max-h-full justify-center mx-auto mt-24">
       <div class="relative bg-white rounded-lg shadow p-8">
         <DialogTitle class="text-xl font-bold mb-4 border-b">Edit User</DialogTitle>
@@ -147,33 +147,50 @@
           <div class="flex flex-row gap-4">
             <div class="relative mb-4 w-full">
                 <label for="first_name" class="leading-7 text-sm text-gray-600">First name</label>
-                <input type="text" id="first_name"  class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                <input type="text" id="first_name" ref="first_name" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" :value="edit.user.first_name">
             </div>
             <div class="relative mb-4 w-full">
                 <label for="last_name" class="leading-7 text-sm text-gray-600">Last name</label>
-                <input type="text" id="last_name" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                <input type="text" id="last_name" ref="last_name" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" :value="edit.user.last_name">
             </div>
           </div>
 
           <div class="relative mb-4 w-full">
                 <label for="email" class="leading-7 text-sm text-gray-600">Email</label>
-                <input type="text" id="email" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                <input type="text" id="email" ref="email" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" :value="edit.user.email">
             </div>
 
             <div class="flex flex-row gap-4">
             <div class="relative mb-4 w-full">
                 <label for="password" class="leading-7 text-sm text-gray-600">Password</label>
-                <input type="text" id="password"  class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                <input type="text" id="password" ref="password" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
             </div>
             <div class="relative mb-4 w-full">
-                <label for="confirm_pass" class="leading-7 text-sm text-gray-600">Confirm Password</label>
+                <label for="confirm_pass" ref="confirm_password" class="leading-7 text-sm text-gray-600">Confirm Password</label>
                 <input type="text" id="confirm_pass" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
             </div>
           </div>
+
+          <div class="relative mb-4">
+              <label for="addr" class="leading-7 text-sm text-gray-600">Address</label>
+              <input type="text" id="addr" ref="address" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+          </div>
+
+          <div class="flex flex-row gap-4">
+            <div class="relative mb-4 w-full">
+                <label for="contact" class="leading-7 text-sm text-gray-600">Contact</label>
+                <input type="number" id="contact" ref="contact" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+              </div>
+            <div class="relative mb-4 w-full">
+                <label for="bday" class="leading-7 text-sm text-gray-600">Birthday</label>
+                <input type="date" id="bday" ref="birthday" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+            </div>
+          </div>
+
         </DialogDescription>
 
         <div class="flex flex-row-reverse gap-2">
-          <button @click="setIsOpen(false)" class="inline-flex text-white bg-indigo-700 border-0 py-1 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">
+          <button @click="updateUser" class="inline-flex text-white bg-indigo-700 border-0 py-1 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">
               Save
           </button>
           <button @click="setIsOpen(false)" class="inline-flex text-white bg-red-700 border-0 py-1 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">
@@ -181,7 +198,7 @@
           </button>
         </div>
 
-      </div>
+    </div>
     </DialogPanel>
   </Dialog>
 
@@ -208,8 +225,11 @@ export default {
   data() {
     return {
       users: '',
-      isOpen: true,
-    };
+      isOpen: false,
+      edit: {
+        user: '',
+      },
+    }
   },
   components: {
     Popover,
@@ -240,8 +260,23 @@ export default {
       });
     },
 
-    setIsOpen(value) {
+    setIsOpen(value, user) {
       this.isOpen = value
+      this.edit.user = user;
+    },
+
+    updateUser() {
+      const AuthStr = 'Bearer '.concat(userStore().user.access_token);
+      axios({
+          method: 'post',
+          params: {id: 1},
+          url: `/api/`,
+          headers: {Authorization: AuthStr}
+      }).then(res => {
+
+      }).catch(err => {
+
+      });
     }
   },
 
