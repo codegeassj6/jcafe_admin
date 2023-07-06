@@ -39,7 +39,6 @@
               </div>
             </PopoverPanel>
           </Popover>
-          <label for="table-search-users" class="sr-only">Search</label>
           <div class="relative">
             <div
               class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
@@ -60,7 +59,6 @@
             </div>
             <input
               type="text"
-              id="table-search-users"
               class="block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Search for users"
             />
@@ -74,11 +72,11 @@
               <th scope="col" class="p-4">
                 <div class="flex items-center">
                   <input
-                    id="checkbox-all-search"
+                    id="checkbox_id"
                     type="checkbox"
                     class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                   />
-                  <label for="checkbox-all-search" class="sr-only"
+                  <label for="checkbox_id" class="sr-only"
                     >checkbox</label
                   >
                 </div>
@@ -99,11 +97,11 @@
               <td class="w-4 p-4">
                 <div class="flex items-center">
                   <input
-                    id="checkbox-table-search-1"
+                    :id="user.id"
                     type="checkbox"
                     class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                   />
-                  <label for="checkbox-table-search-1" class="sr-only"
+                  <label :for="user.id" class="sr-only"
                     >checkbox</label
                   >
                 </div>
@@ -163,27 +161,27 @@
             <div class="flex flex-row gap-4">
             <div class="relative mb-4 w-full">
                 <label for="password" class="leading-7 text-sm text-gray-600">Password</label>
-                <input type="text" id="password" ref="password" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                <input type="password" id="password" ref="password" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
             </div>
             <div class="relative mb-4 w-full">
-                <label for="confirm_pass" ref="confirm_password" class="leading-7 text-sm text-gray-600">Confirm Password</label>
-                <input type="text" id="confirm_pass" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                <label for="confirm_pass" class="leading-7 text-sm text-gray-600">Confirm Password</label>
+                <input type="password" id="confirm_pass" ref="confirm_password" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
             </div>
           </div>
 
           <div class="relative mb-4">
               <label for="addr" class="leading-7 text-sm text-gray-600">Address</label>
-              <input type="text" id="addr" ref="address" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+              <input type="text" id="addr" ref="address" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" :value="edit.user.address">
           </div>
 
           <div class="flex flex-row gap-4">
             <div class="relative mb-4 w-full">
                 <label for="contact" class="leading-7 text-sm text-gray-600">Contact</label>
-                <input type="number" id="contact" ref="contact" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                <input type="number" id="contact" ref="contact" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" :value="edit.user.contact">
               </div>
             <div class="relative mb-4 w-full">
                 <label for="bday" class="leading-7 text-sm text-gray-600">Birthday</label>
-                <input type="date" id="bday" ref="birthday" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                <input type="date" id="bday" ref="birthday" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" :value="edit.user.birthday">
             </div>
           </div>
 
@@ -268,12 +266,22 @@ export default {
     updateUser() {
       const AuthStr = 'Bearer '.concat(userStore().user.access_token);
       axios({
-          method: 'post',
-          params: {id: 1},
-          url: `/api/`,
+          method: 'patch',
+          url: `/api/users/${this.edit.user.id}`,
+          params: {
+            first_name: this.$refs.first_name.value,
+            last_name: this.$refs.last_name.value,
+            email: this.$refs.email.value,
+            password: this.$refs.password.value,
+            confirm_password: this.$refs.confirm_password.value,
+            address: this.$refs.address.value,
+            contact: this.$refs.contact.value,
+            birthday: this.$refs.birthday.value,
+          },
           headers: {Authorization: AuthStr}
-      }).then(res => {
-
+      }).then(res => {console.log(res.data);
+        this.isOpen = false;
+        this.edit.user = '';
       }).catch(err => {
 
       });

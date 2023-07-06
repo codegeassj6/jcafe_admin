@@ -27,6 +27,7 @@ Route::group(['prefix' => 'dashboard'], function ($router) {
 
 Route::group(['prefix' => 'users'], function ($router) {
     Route::get('/', 'App\Http\Controllers\UserController@index')->middleware('auth');
+    Route::patch('/{id}', 'App\Http\Controllers\UserController@update')->middleware('auth');
 });
 
 

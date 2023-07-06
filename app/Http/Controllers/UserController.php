@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Auth;
+use Hash;
 
 class UserController extends Controller
 {
@@ -40,9 +41,20 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, User $user)
+    public function update(Request $request, $id)
     {
-        //
+      $user = User::whereId($id)->firstOrFail();
+      $user->update([
+        'first_name' => $request->input('first_name'),
+        'last_name' => $request->input('last_name'),
+        'email' => $request->input('email'),
+        'password' => Hash::make($request->input('password')),
+        'address' => $request->input('address'),
+        'contact' => $request->input('contact'),
+        'birthday' => $request->input('birthday')
+      ]);
+
+      return $user;
     }
 
     /**
@@ -51,5 +63,9 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         //
+    }
+
+    public function search(Request $request) {
+
     }
 }
