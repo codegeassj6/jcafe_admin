@@ -60,12 +60,19 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(User $user)
+    public function destroy($id)
     {
-        //
+
     }
 
     public function search(Request $request) {
+      $user = User::where('first_name', 'LIKE', '%' . $request->input('query') . '%')
+      ->orWhere('last_name', 'LIKE', '%' . $request->input('query') . '%')
+      ->orWhere('id', 'LIKE', '%' . $request->input('query') . '%')
+      ->orWhere('address', 'LIKE', '%' . $request->input('query') . '%')
+      ->orWhere('email', 'LIKE', '%' . $request->input('query') . '%')
+      ->get();
 
+      return $user;
     }
 }

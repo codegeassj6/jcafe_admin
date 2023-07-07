@@ -1,6 +1,6 @@
-2
+3
 
-resume on search
+resume on post
 
 
 logout error

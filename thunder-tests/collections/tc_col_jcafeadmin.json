@@ -17,6 +17,13 @@
             "containerId": "",
             "created": "2023-07-03T19:21:33.927Z",
             "sortNum": 30000
+        },
+        {
+            "_id": "048606e0-c30a-48c1-a68d-111c2d52407f",
+            "name": "Users",
+            "containerId": "",
+            "created": "2023-07-06T16:08:20.609Z",
+            "sortNum": 40000
         }
     ],
     "requests": [
@@ -58,6 +65,18 @@
             "headers": [],
             "params": [],
             "tests": []
+        },
+        {
+            "_id": "dfa9cd5d-606d-4943-8084-23fbb7094a5a",
+            "colId": "1c3cf875-1165-43a7-81c3-3daf6a1ddb2a",
+            "containerId": "048606e0-c30a-48c1-a68d-111c2d52407f",
+            "name": "Delete",
+            "url": "",
+            "method": "GET",
+            "sortNum": 20000,
+            "created": "2023-07-06T16:08:27.471Z",
+            "modified": "2023-07-06T16:08:27.471Z",
+            "headers": []
         }
     ],
     "settings": {

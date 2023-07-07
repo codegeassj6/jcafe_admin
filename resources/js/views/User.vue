@@ -32,9 +32,9 @@
             >
               <div class="py-2 text-sm text-gray-700">
                 <a
-                  href="/integrations"
+                  role="button"
                   class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
-                  >Delete</a
+                  >Not applicable</a
                 >
               </div>
             </PopoverPanel>
@@ -61,6 +61,8 @@
               type="text"
               class="block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Search for users"
+              @keyup="searchUser"
+              ref="search"
             />
           </div>
         </div>
@@ -72,6 +74,8 @@
               <th scope="col" class="p-4">
                 <div class="flex items-center">
                   <input
+                    ref="checkbox_all"
+                    @change="selectAll"
                     id="checkbox_id"
                     type="checkbox"
                     class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
@@ -99,6 +103,8 @@
                   <input
                     :id="user.id"
                     type="checkbox"
+                    v-model="selected_users"
+                    :value="user.id"
                     class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                   />
                   <label :for="user.id" class="sr-only"
@@ -114,8 +120,6 @@
               </td>
               <td class="px-6 py-4">
                 <p>Role: {{ user.role }}</p>
-                <p>Birthday: {{ user.birthday }}</p>
-                <p>{{ user.address }}</p>
               </td>
               <td class="px-6 py-4">
                 <div class="flex items-center">
@@ -227,6 +231,8 @@ export default {
       edit: {
         user: '',
       },
+      selected_users: [],
+      // user_checkbox: '',
     }
   },
   components: {
@@ -285,7 +291,39 @@ export default {
       }).catch(err => {
 
       });
-    }
+    },
+
+    searchUser() {console.log(this.$refs.search.value);
+      if(this.$refs.search.value == null) {
+        this.getAllUsers();
+      } else {
+        const AuthStr = 'Bearer '.concat(userStore().user.access_token);
+      axios({
+          method: 'get',
+          params: {query: this.$refs.search.value},
+          url: `/api/users/search`,
+          headers: {Authorization: AuthStr}
+      }).then(res => {
+        this.users = res.data;
+      }).catch(err => {
+
+      });
+      }
+    },
+
+    selectAll(e) {
+      if(e.target.checked) {
+        this.users.forEach((user) => {
+          if(!this.selected_users.includes(user.id)) {
+            this.selected_users.push(user.id);
+          }
+        })
+      } else {
+        this.selected_users = [];
+      }
+    },
+
+
   },
 
   watch: {
