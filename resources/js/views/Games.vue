@@ -2,7 +2,7 @@
   <div>
     <Aside />
 
-    <div class="pt-20 px-4 ml-64">
+    <div class="pt-20 px-4 ml-16 sm:ml-64">
       <div class="relative overflow-x-auto shadow-md sm:rounded-lg p-4 border">
         <div
           class="flex items-center justify-between pb-4 bg-white dark:bg-gray-900"
@@ -32,7 +32,7 @@
             >
               <div class="py-2 text-sm text-gray-700">
                 <a
-                  @click="setIsOpen(modal.addGames = true)"
+                  @click="modal.addGames = true"
                   role="button"
                   class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
                   >Add Games</a
@@ -74,7 +74,9 @@
             />
           </div>
         </div>
-        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+        <table
+          class="w-full text-sm text-left text-gray-500 dark:text-gray-400"
+        >
           <thead
             class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
           >
@@ -87,9 +89,7 @@
                     type="checkbox"
                     class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                   />
-                  <label for="checkbox-all" class="sr-only"
-                    >checkbox</label
-                  >
+                  <label for="checkbox-all" class="sr-only">checkbox</label>
                 </div>
               </th>
               <th scope="col" class="px-2 py-3">ID</th>
@@ -112,16 +112,18 @@
                     type="checkbox"
                     class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                   />
-                  <label :for="game.id" class="sr-only"
-                    >checkbox</label
-                  >
+                  <label :for="game.id" class="sr-only">checkbox</label>
                 </div>
               </td>
               <td class="px-2 py-4">
-                <div class="text-base text-dark font-semibold">{{ game.id }}</div>
+                <div class="text-base text-dark font-semibold">
+                  {{ game.id }}
+                </div>
               </td>
               <td class="px-6 py-4">
-                <div class="text-base text-dark font-semibold">{{ game.name }}</div>
+                <div class="text-base text-dark font-semibold">
+                  {{ game.name }}
+                </div>
               </td>
               <td class="px-6 py-4">
                 <a
@@ -136,36 +138,143 @@
       </div>
     </div>
 
+    <Dialog
+      :open="modal.addGames"
+      @close="setIsOpen"
+      class="z-50 bg-opacity-50 absolute bg-black w-full p-4 overflow-x-hidden overflow-y-auto inset-0 h-[calc(100%-1rem)] max-h-full"
+    >
+      <DialogPanel
+        class="relative w-full max-w-5xl max-h-full justify-center mx-auto mt-24"
+      >
+        <div class="relative bg-white rounded-lg shadow p-8">
+          <DialogTitle class="text-xl font-bold mb-4 border-b"
+            >Add Games</DialogTitle
+          >
+          <DialogDescription>
+            <div class="relative mb-4">
+              <label for="name" class="leading-7 text-sm text-gray-600"
+                >Name</label
+              >
+              <input
+                type="text"
+                id="name"
+                v-model="form.addGames.name"
+                class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+              />
+            </div>
 
-    <Dialog :open="modal.addGames" @close="setIsOpen" class="relative z-50">
-    <div class="fixed inset-0 flex items-center justify-center p-4">
-      <DialogPanel class="w-full max-w-sm rounded bg-white">
-        <DialogTitle>Complete your order</DialogTitle>
-        <DialogDescription>
-          This will permanently deactivate your account
-        </DialogDescription>
+            <div class="relative mb-4">
+              <label for="genre" class="leading-7 text-sm text-gray-600"
+                >Genre</label
+              >
+              <input
+                type="text"
+                id="genre"
+                v-model="form.addGames.genre"
+                class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+              />
+            </div>
+
+            <div class="relative mb-4">
+              <label for="link" class="leading-7 text-sm text-gray-600"
+                >Trailer Link</label
+              >
+              <input
+                type="url"
+                v-model="form.addGames.trailer_link"
+                id="link"
+                class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+              />
+            </div>
+
+            <div class="flex items-center justify-center w-full mb-8">
+              <label
+                for="dropzone-file"
+                class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+              >
+                <div
+                  class="flex flex-col items-center justify-center pt-5 pb-6"
+                >
+                  <svg
+                    class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 20 16"
+                  >
+                    <path
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                    />
+                  </svg>
+                  <p class="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                    <span class="font-semibold">Click to upload</span> or drag
+                    and drop
+                  </p>
+                  <p class="text-xs text-gray-500 dark:text-gray-400">
+                    SVG, PNG, JPG or GIF (MAX. 800x400px)
+                  </p>
+                </div>
+                <input id="dropzone-file" @change="dropzoneAddGames" type="file" class="hidden" />
+              </label>
+            </div>
+
+            <div class="flex flex-row gap-4 justify-center">
+              <button
+                class="inline-flex text-white bg-indigo-700 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg"
+                @click="addGames"
+              >
+                Add Game
+              </button>
+
+              <button
+                class="inline-flex text-white bg-red-700 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg"
+                @click="modal.addGames = false"
+              >
+                Cancel
+              </button>
+            </div>
+          </DialogDescription>
+        </div>
       </DialogPanel>
-    </div>
-  </Dialog>
-
-
+    </Dialog>
   </div>
 </template>
 <script>
-import { Popover, PopoverButton, PopoverPanel, Dialog, DialogPanel, DialogTitle, DialogDescription } from "@headlessui/vue";
-import Aside from '../components/Aside.vue';
+import {
+  Popover,
+  PopoverButton,
+  PopoverPanel,
+  Dialog,
+  DialogPanel,
+  DialogTitle,
+  DialogDescription,
+} from "@headlessui/vue";
+import Aside from "../components/Aside.vue";
 import { userStore } from "../stores/userStore";
 
 export default {
   data() {
     return {
-      games: '',
+      games: "",
       selected_games: [],
       modal: {
         addGames: false,
       },
+      form: {
+        addGames: {
+          name: '',
+          genre: '',
+          trailer_link: '',
+          image: '',
+        }
+      }
     };
   },
+
   components: {
     Popover,
     PopoverButton,
@@ -182,43 +291,53 @@ export default {
   computed: {},
 
   methods: {
-    setIsOpen() {},
+    dropzoneAddGames(e) {
+      this.form.addGames.image = e.target.files[0]
+    },
+
+    addGames() {
+
+    },
+
+    setIsOpen(value) {
+      this.modal.addGames = value;
+    },
 
     getGames() {
-      const AuthStr = 'Bearer '.concat(userStore().user.access_token);
+      const AuthStr = "Bearer ".concat(userStore().user.access_token);
       axios({
-          method: 'get',
-          url: `/api/games`,
-          headers: {Authorization: AuthStr}
-      }).then(res => {
-        this.games = res.data
-      }).catch(err => {
-
-      });
+        method: "get",
+        url: `/api/games`,
+        headers: { Authorization: AuthStr },
+      })
+        .then((res) => {
+          this.games = res.data;
+        })
+        .catch((err) => {});
     },
 
     searchGames(e) {
-      if(e.target.value) {
-        const AuthStr = 'Bearer '.concat(userStore().user.access_token);
+      if (e.target.value) {
+        const AuthStr = "Bearer ".concat(userStore().user.access_token);
         axios({
-            method: 'get',
-            params: {query: e.target.value},
-            url: `/api/games/search`,
-            headers: {Authorization: AuthStr}
-        }).then(res => {
-          this.games = res.data;
-        }).catch(err => {
-
-        });
+          method: "get",
+          params: { query: e.target.value },
+          url: `/api/games/search`,
+          headers: { Authorization: AuthStr },
+        })
+          .then((res) => {
+            this.games = res.data;
+          })
+          .catch((err) => {});
       } else {
         this.getGames();
       }
     },
 
     selectAll(e) {
-      if(e.target.checked) {
+      if (e.target.checked) {
         this.games.forEach((game) => {
-          if(!this.selected_games.includes(game.id)) {
+          if (!this.selected_games.includes(game.id)) {
             this.selected_games.push(game.id);
           }
         });
@@ -227,26 +346,22 @@ export default {
       }
     },
 
-    initAddGames() {
+    initAddGames() {},
 
-    },
-
-    addGames() {
-
-    },
+    addGames() {},
 
     deleteGames() {
-      const AuthStr = 'Bearer '.concat(userStore().user.access_token);
+      const AuthStr = "Bearer ".concat(userStore().user.access_token);
       axios({
-          method: 'delete',
-          data: {id: this.selected_games},
-          url: `/api/games`,
-          headers: {Authorization: AuthStr},
-      }).then(res => {
-
-      }).catch(err => {
-        console.log(err.response);
-      });
+        method: "delete",
+        data: { id: this.selected_games },
+        url: `/api/games`,
+        headers: { Authorization: AuthStr },
+      })
+        .then((res) => {})
+        .catch((err) => {
+          console.log(err.response);
+        });
     },
   },
 
