@@ -32,13 +32,15 @@
             >
               <div class="py-2 text-sm text-gray-700">
                 <a
+                  @click="setIsOpen(modal.addGames = true)"
                   role="button"
                   class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
                   >Add Games</a
                 >
                 <a
-                  href="/integrations"
+                  role="button"
                   class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
+                  @click="deleteGames"
                   >Delete Games</a
                 >
               </div>
@@ -67,7 +69,8 @@
               type="text"
               id="table-search-games"
               class="block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Search for users"
+              placeholder="Search games"
+              @keyup="searchGames"
             />
           </div>
         </div>
@@ -79,11 +82,12 @@
               <th scope="col" class="p-4">
                 <div class="flex items-center">
                   <input
-                    id="checkbox-all-search"
+                    id="checkbox-all"
+                    @change="selectAll"
                     type="checkbox"
                     class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                   />
-                  <label for="checkbox-all-search" class="sr-only"
+                  <label for="checkbox-all" class="sr-only"
                     >checkbox</label
                   >
                 </div>
@@ -96,24 +100,28 @@
           <tbody>
             <tr
               class="bg-white border-b items-center dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+              v-for="game in games"
+              :key="game.id"
             >
               <td class="w-4 p-4">
                 <div class="flex items-center">
                   <input
-                    id="checkbox-table-search-1"
+                    v-model="selected_games"
+                    :value="game.id"
+                    :id="game.id"
                     type="checkbox"
                     class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                   />
-                  <label for="checkbox-table-search-1" class="sr-only"
+                  <label :for="game.id" class="sr-only"
                     >checkbox</label
                   >
                 </div>
               </td>
               <td class="px-2 py-4">
-                <div class="text-base text-dark font-semibold">1</div>
+                <div class="text-base text-dark font-semibold">{{ game.id }}</div>
               </td>
               <td class="px-6 py-4">
-                <div class="text-base text-dark font-semibold">God of War 4</div>
+                <div class="text-base text-dark font-semibold">{{ game.name }}</div>
               </td>
               <td class="px-6 py-4">
                 <a
@@ -127,20 +135,45 @@
         </table>
       </div>
     </div>
+
+
+    <Dialog :open="modal.addGames" @close="setIsOpen" class="relative z-50">
+    <div class="fixed inset-0 flex items-center justify-center p-4">
+      <DialogPanel class="w-full max-w-sm rounded bg-white">
+        <DialogTitle>Complete your order</DialogTitle>
+        <DialogDescription>
+          This will permanently deactivate your account
+        </DialogDescription>
+      </DialogPanel>
+    </div>
+  </Dialog>
+
+
   </div>
 </template>
 <script>
-import { Popover, PopoverButton, PopoverPanel } from "@headlessui/vue";
+import { Popover, PopoverButton, PopoverPanel, Dialog, DialogPanel, DialogTitle, DialogDescription } from "@headlessui/vue";
 import Aside from '../components/Aside.vue';
+import { userStore } from "../stores/userStore";
 
 export default {
   data() {
-    return {};
+    return {
+      games: '',
+      selected_games: [],
+      modal: {
+        addGames: false,
+      },
+    };
   },
   components: {
     Popover,
     PopoverButton,
     PopoverPanel,
+    Dialog,
+    DialogPanel,
+    DialogTitle,
+    DialogDescription,
     Aside,
   },
 
@@ -148,7 +181,74 @@ export default {
 
   computed: {},
 
-  methods: {},
+  methods: {
+    setIsOpen() {},
+
+    getGames() {
+      const AuthStr = 'Bearer '.concat(userStore().user.access_token);
+      axios({
+          method: 'get',
+          url: `/api/games`,
+          headers: {Authorization: AuthStr}
+      }).then(res => {
+        this.games = res.data
+      }).catch(err => {
+
+      });
+    },
+
+    searchGames(e) {
+      if(e.target.value) {
+        const AuthStr = 'Bearer '.concat(userStore().user.access_token);
+        axios({
+            method: 'get',
+            params: {query: e.target.value},
+            url: `/api/games/search`,
+            headers: {Authorization: AuthStr}
+        }).then(res => {
+          this.games = res.data;
+        }).catch(err => {
+
+        });
+      } else {
+        this.getGames();
+      }
+    },
+
+    selectAll(e) {
+      if(e.target.checked) {
+        this.games.forEach((game) => {
+          if(!this.selected_games.includes(game.id)) {
+            this.selected_games.push(game.id);
+          }
+        });
+      } else {
+        this.selected_games = [];
+      }
+    },
+
+    initAddGames() {
+
+    },
+
+    addGames() {
+
+    },
+
+    deleteGames() {
+      const AuthStr = 'Bearer '.concat(userStore().user.access_token);
+      axios({
+          method: 'delete',
+          data: {id: this.selected_games},
+          url: `/api/games`,
+          headers: {Authorization: AuthStr},
+      }).then(res => {
+
+      }).catch(err => {
+        console.log(err.response);
+      });
+    },
+  },
 
   watch: {
     $data: {
@@ -173,7 +273,9 @@ export default {
 
   beforeMounted() {},
 
-  mounted() {},
+  mounted() {
+    this.getGames();
+  },
 };
 </script>
 

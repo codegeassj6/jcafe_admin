@@ -14,7 +14,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $user = User::all();
+        $user = User::orderBy('created_at', 'desc')->get();
 
         if(Auth::user()->role != 'admin') {
           return response()->json(['message' => 'Unauthorized'], 500);

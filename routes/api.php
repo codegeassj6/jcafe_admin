@@ -32,6 +32,16 @@ Route::group(['prefix' => 'users'], function ($router) {
 });
 
 
+Route::group(['prefix' => 'posts'], function ($router) {
+  Route::get('/', 'App\Http\Controllers\PostController@index')->middleware('auth');
+});
+
+Route::group(['prefix' => 'games'], function ($router) {
+  Route::get('/', 'App\Http\Controllers\GameController@index')->middleware('auth');
+  Route::get('/search', 'App\Http\Controllers\GameController@search')->middleware('auth');
+  Route::delete('/', 'App\Http\Controllers\GameController@destroy')->middleware('auth');
+});
+
 
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //     return $request->user();

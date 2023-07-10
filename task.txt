@@ -1,6 +1,10 @@
-3
+4
 
-resume on post
+resume on add games modal
 
 
 logout error
+
+
+middleware api
+laravel validator

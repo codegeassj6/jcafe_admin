@@ -3,7 +3,7 @@
     <Aside />
 
     <div class="ml-64 pt-20 px-4">
-      <form class="mb-4">
+      <form class="mb-4" @submit.prevent="post">
         <div
           class="w-full mb-4 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600"
         >
@@ -11,10 +11,11 @@
             <label for="comment" class="sr-only">Your comment</label>
             <textarea
               id="comment"
-              rows="4"
-              class="w-full px-0 text-sm text-gray-900 bg-white border-0 dark:bg-gray-800 focus:ring-0 dark:text-white dark:placeholder-gray-400"
+              rows="8"
+              class="w-full px-0 text-sm text-gray-900 bg-white border-0 focus:outline-none dark:bg-gray-800 focus:ring-0 dark:text-white dark:placeholder-gray-400"
               placeholder="Write a comment..."
               required
+              ref="message"
             ></textarea>
           </div>
           <div
@@ -88,7 +89,7 @@
           </div>
         </div>
       </form>
-      <div class="border rounded">
+      <div class="border rounded mb-4" v-for="post in posts" :key="post.id">
         <div class="flex flex-row gap-4 p-4">
           <img
             src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
@@ -98,7 +99,7 @@
             class="rounded-full"
           />
           <div>
-            <h4 class="text-xl font-bold text-indigo-700">Jhon Rey Repuela</h4>
+            <h4 class="text-xl font-bold text-indigo-700">{{ post.get_user_details.first_name + ' ' + post.get_user_details.last_name }}</h4>
             <p class="text-gray-400">Friday, May 12, 2020</p>
           </div>
           <div class="ms-auto">
@@ -106,19 +107,7 @@
           </div>
         </div>
         <div class="px-4 mb-4">
-          Consequat proident Lorem ad est amet labore incididunt amet incididunt
-          excepteur dolore sint. Laborum in sint ut ipsum reprehenderit voluptate
-          voluptate culpa non non aute dolore commodo. Exercitation laborum
-          consectetur excepteur consequat fugiat labore aliquip culpa. Qui quis ad
-          proident nostrud. Enim anim nulla fugiat id voluptate nulla sint
-          adipisicing laborum velit. Commodo in commodo cillum tempor excepteur
-          eiusmod. Nisi culpa nostrud magna esse anim mollit ullamco ullamco
-          dolore laboris dolor minim. Excepteur aliqua laboris aliquip id qui
-          aliqua minim exercitation amet laboris. Cillum pariatur reprehenderit
-          irure consectetur velit enim ullamco esse anim ut in proident. Excepteur
-          et mollit commodo eu. Pariatur quis duis in veniam sint incididunt
-          exercitation excepteur ea dolor amet. Velit voluptate ea do officia
-          irure quis.
+          {{ post.message }}
         </div>
         <div class="flex flex-row px-4 gap-4 mb-4">
           <div class="text-indigo-700">
@@ -135,7 +124,7 @@
             </button>
           </div>
         </div>
-        <div class="bg-indigo-50 py-4 px-12 flex flex-col gap-4 border">
+        <div class="bg-indigo-50 py-4 px-12 flex flex-col gap-4 border" v-if="post.get_comments">
           <div class="flex flex-row gap-4">
             <img
               src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
@@ -151,16 +140,7 @@
             </div>
           </div>
           <div>
-            Deserunt incididunt pariatur ex incididunt velit ex irure anim
-            adipisicing. Exercitation quis aute proident cupidatat anim. Eiusmod
-            ex commodo in minim adipisicing incididunt laboris sint in occaecat
-            Lorem ullamco id eu. Amet enim ad ut ipsum cupidatat eu veniam. Ut est
-            irure ullamco sit sunt culpa aliqua ipsum veniam anim dolor ex in
-            consectetur. Tempor Lorem laboris qui eu laboris do sit fugiat elit.
-            Minim voluptate nostrud eiusmod velit nostrud cillum ad voluptate.
-            Magna proident sint ut nostrud occaecat. Cillum anim veniam velit
-            ipsum amet labore. Elit eu et qui laborum veniam quis fugiat deserunt
-            enim.
+            {{ post.get_comments.message }}
           </div>
           <div class="">
             <a role="button"
@@ -187,10 +167,13 @@
 </template>
 <script>
 import Aside from '../components/Aside.vue';
+import { userStore } from '../stores/userStore';
 
 export default {
   data() {
-    return {};
+    return {
+      posts: '',
+    };
   },
   components: {
     Aside,
@@ -200,7 +183,38 @@ export default {
 
   computed: {},
 
-  methods: {},
+  methods: {
+    getPost() {
+      const AuthStr = 'Bearer '.concat(userStore().user.access_token);
+      axios({
+          method: 'get',
+          url: `/api/posts`,
+          headers: {Authorization: AuthStr}
+      }).then(res => {
+        this.posts = res.data
+      }).catch(err => {
+
+      });
+    },
+
+    post() {
+      const AuthStr = 'Bearer '.concat(userStore().user.access_token);
+      axios({
+          method: 'post',
+          params: {
+
+          },
+          url: `/api/posts`,
+          headers: {Authorization: AuthStr}
+      }).then(res => {
+
+      }).catch(err => {
+
+      });
+    },
+
+
+  },
 
   watch: {
     $data: {
@@ -225,7 +239,9 @@ export default {
 
   beforeMounted() {},
 
-  mounted() {},
+  mounted() {
+    this.getPost();
+  },
 };
 </script>
 

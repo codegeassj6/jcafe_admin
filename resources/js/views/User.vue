@@ -131,7 +131,7 @@
                 <a
                   role="button"
                   class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                  @click="setIsOpen(true, user)"
+                  @click="initModal(true, user)"
                   >Edit
                 </a>
               </td>
@@ -141,7 +141,7 @@
       </div>
     </div>
 
-    <Dialog v-if="edit.user" :open="isOpen" @close="setIsOpen" class="z-50 bg-opacity-50 absolute bg-black w-full p-4 overflow-x-hidden overflow-y-auto inset-0 h-[calc(100%-1rem)] max-h-full">
+    <Dialog v-if="edit.user" :open="isModalOpen" @close="initModal" class="z-50 bg-opacity-50 absolute bg-black w-full p-4 overflow-x-hidden overflow-y-auto inset-0 h-[calc(100%-1rem)] max-h-full">
     <DialogPanel class="relative w-full max-w-5xl max-h-full justify-center mx-auto mt-24">
       <div class="relative bg-white rounded-lg shadow p-8">
         <DialogTitle class="text-xl font-bold mb-4 border-b">Edit User</DialogTitle>
@@ -195,7 +195,7 @@
           <button @click="updateUser" class="inline-flex text-white bg-indigo-700 border-0 py-1 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">
               Save
           </button>
-          <button @click="setIsOpen(false)" class="inline-flex text-white bg-red-700 border-0 py-1 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">
+          <button @click="initModal(false)" class="inline-flex text-white bg-red-700 border-0 py-1 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">
             Cancel
           </button>
         </div>
@@ -214,7 +214,6 @@ import { Popover, PopoverButton, PopoverPanel } from "@headlessui/vue";
 import Aside from '../components/Aside.vue'
 import { userStore } from "../stores/userStore";
 
-// import { ref } from 'vue'
 import {
   Dialog,
   DialogPanel,
@@ -227,12 +226,11 @@ export default {
   data() {
     return {
       users: '',
-      isOpen: false,
+      isModalOpen: false,
       edit: {
         user: '',
       },
       selected_users: [],
-      // user_checkbox: '',
     }
   },
   components: {
@@ -240,7 +238,6 @@ export default {
     PopoverButton,
     PopoverPanel,
     Aside,
-
     Dialog,
     DialogPanel,
     DialogTitle,
@@ -264,8 +261,8 @@ export default {
       });
     },
 
-    setIsOpen(value, user) {
-      this.isOpen = value
+    initModal(value, user) {
+      this.isModalOpen = value
       this.edit.user = user;
     },
 
@@ -285,15 +282,15 @@ export default {
             birthday: this.$refs.birthday.value,
           },
           headers: {Authorization: AuthStr}
-      }).then(res => {console.log(res.data);
-        this.isOpen = false;
+      }).then(res => {
+        this.isModalOpen = false;
         this.edit.user = '';
       }).catch(err => {
 
       });
     },
 
-    searchUser() {console.log(this.$refs.search.value);
+    searchUser() {
       if(this.$refs.search.value == null) {
         this.getAllUsers();
       } else {
