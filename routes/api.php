@@ -38,6 +38,7 @@ Route::group(['prefix' => 'posts'], function ($router) {
 
 Route::group(['prefix' => 'games'], function ($router) {
   Route::get('/', 'App\Http\Controllers\GameController@index')->middleware('auth');
+  Route::post('/', 'App\Http\Controllers\GameController@store')->middleware('auth');
   Route::get('/search', 'App\Http\Controllers\GameController@search')->middleware('auth');
   Route::delete('/', 'App\Http\Controllers\GameController@destroy')->middleware('auth');
 });

@@ -163,16 +163,33 @@
               />
             </div>
 
-            <div class="relative mb-4">
-              <label for="genre" class="leading-7 text-sm text-gray-600"
-                >Genre</label
+            <div class="flex flex-row gap-4 mb-4">
+              <div class="w-full">
+                <label for="genre" class="leading-7 text-sm text-gray-600"
+                  >Genre</label
+                >
+                <input
+                  type="text"
+                  id="genre"
+                  v-model="form.addGames.genre"
+                  class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                />
+              </div>
+
+              <div class="w-full">
+                <label for="rating" class="leading-7 text-sm text-gray-600"
+                >Rating</label
               >
               <input
-                type="text"
-                id="genre"
-                v-model="form.addGames.genre"
+                type="number"
+                id="rating"
+                min="1"
+                max="5"
+                v-model="form.addGames.rating"
                 class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
               />
+              </div>
+
             </div>
 
             <div class="relative mb-4">
@@ -218,25 +235,28 @@
                     SVG, PNG, JPG or GIF (MAX. 800x400px)
                   </p>
                 </div>
-                <input id="dropzone-file" @change="dropzoneAddGames" type="file" class="hidden" />
+                <input id="dropzone-file" @change="dropzoneAddGames" type="file" class="hidden" accept="image/png, image/jpeg" />
               </label>
             </div>
 
             <div class="flex flex-row gap-4 justify-center">
               <button
                 class="inline-flex text-white bg-indigo-700 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg"
-                @click="addGames"
+                type="button"
+                @click="addNewGame"
               >
                 Add Game
               </button>
 
               <button
+                type="button"
                 class="inline-flex text-white bg-red-700 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg"
                 @click="modal.addGames = false"
               >
                 Cancel
               </button>
             </div>
+
           </DialogDescription>
         </div>
       </DialogPanel>
@@ -270,6 +290,7 @@ export default {
           genre: '',
           trailer_link: '',
           image: '',
+          rating: '',
         }
       }
     };
@@ -292,11 +313,29 @@ export default {
 
   methods: {
     dropzoneAddGames(e) {
-      this.form.addGames.image = e.target.files[0]
+      this.form.addGames.image = e.target.files[0] || e.dataTransfer.files[0];
     },
 
-    addGames() {
+    addNewGame() {
+      const formData = new FormData;
+      formData.append('image', this.form.addGames.image);
+      formData.append('name', this.form.addGames.name);
+      formData.append('genre', this.form.addGames.genre);
+      formData.append('trailer_link', this.form.addGames.trailer_link);
+      formData.append('rating', this.form.addGames.rating);
 
+      const AuthStr = 'Bearer '.concat(userStore().user.access_token);
+      axios.post(`/api/games`, formData, {
+        headers: {
+            Authorization: AuthStr,
+            "Content-Type": "multipart/form-data",
+          }
+      }).then(res => {
+        this.games.unshift(res.data)
+        this.modal.addGames = false;
+      }).catch(err => {
+        console.log(err.response.data.message);
+      });
     },
 
     setIsOpen(value) {
@@ -351,6 +390,7 @@ export default {
     addGames() {},
 
     deleteGames() {
+
       const AuthStr = "Bearer ".concat(userStore().user.access_token);
       axios({
         method: "delete",
@@ -358,7 +398,10 @@ export default {
         url: `/api/games`,
         headers: { Authorization: AuthStr },
       })
-        .then((res) => {})
+        .then((res) => {
+          // temp
+          this.games = res.data;
+        })
         .catch((err) => {
           console.log(err.response);
         });
