@@ -1,6 +1,6 @@
-6
+7
 
-resume on add games modal
+test if role is not admin
 
 
 logout error

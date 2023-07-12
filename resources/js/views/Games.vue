@@ -385,10 +385,6 @@ export default {
       }
     },
 
-    initAddGames() {},
-
-    addGames() {},
-
     deleteGames() {
 
       const AuthStr = "Bearer ".concat(userStore().user.access_token);

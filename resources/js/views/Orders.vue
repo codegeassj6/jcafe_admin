@@ -5,6 +5,8 @@
     <div class="pt-20 ml-64 px-4">
       <div
         class="relative overflow-x-auto shadow-lg sm:rounded-lg border rounded p-4"
+        v-for="order in orders"
+        :key="order.id"
       >
         <table
           class="w-full text-sm text-left text-gray-500 dark:text-gray-400 mb-4"
@@ -13,9 +15,11 @@
             class="p-2 mb-2 text-lg font-semibold text-left text-gray-900 bg-white dark:text-white dark:bg-gray-800"
           >
             <div class="flex flex-row">
-              <h3>Jhon Rey Repuela</h3>
+              <div>
+                <h3>Jhon Rey Repuela</h3>
+              </div>
               <div class="ms-auto">
-                <i class="fa-solid fa-ellipsis-vertical"></i>
+                <p class="text-sm text-gray-500">Order #: {{ order.id }}</p>
               </div>
             </div>
           </caption>
@@ -66,10 +70,13 @@
 </template>
 <script>
 import Aside from '../components/Aside.vue';
+import { userStore } from '../stores/userStore';
 
 export default {
   data() {
-    return {};
+    return {
+      orders: '',
+    };
   },
   components: {
     Aside,
@@ -79,7 +86,20 @@ export default {
 
   computed: {},
 
-  methods: {},
+  methods: {
+    getOrders() {
+      const AuthStr = 'Bearer '.concat(userStore().user.access_token);
+      axios({
+          method: 'get',
+          url: `/api/orders`,
+          headers: {Authorization: AuthStr}
+      }).then(res => {
+        this.orders = res.data
+      }).catch(err => {
+
+      });
+    },
+  },
 
   watch: {
     $data: {
@@ -104,7 +124,9 @@ export default {
 
   beforeMounted() {},
 
-  mounted() {},
+  mounted() {
+    this.getOrders();
+  },
 };
 </script>
 

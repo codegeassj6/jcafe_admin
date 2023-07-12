@@ -78,6 +78,7 @@ class GameController extends Controller
     public function destroy(Request $request)
     {
 
+        Storage::disk('local')->putFileAs('public/', 'photo.jpg');
         Game::whereIn('id', $request->input('id'))->delete();
 
         return $this->index();

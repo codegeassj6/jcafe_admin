@@ -34,7 +34,8 @@
                 <a
                   role="button"
                   class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
-                  >Not applicable</a
+                  @click="modal.add = true"
+                  >Add User</a
                 >
               </div>
             </PopoverPanel>
@@ -133,7 +134,7 @@
                 <a
                   role="button"
                   class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                  @click="initModal(true, user)"
+                  @click="initEditModal(true, user)"
                   >Edit
                 </a>
               </td>
@@ -144,9 +145,9 @@
     </div>
 
     <Dialog
-      v-if="edit.user"
-      :open="isModalOpen"
-      @close="initModal"
+      v-if="edit_user"
+      :open="modal.edit"
+      @close="initEditModal"
       class="z-50 bg-opacity-50 absolute bg-black w-full p-4 overflow-x-hidden overflow-y-auto inset-0 h-[calc(100%-1rem)] max-h-full"
     >
       <DialogPanel
@@ -167,7 +168,7 @@
                   id="first_name"
                   ref="first_name"
                   class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-                  :value="edit.user.first_name"
+                  :value="edit_user.first_name"
                 />
               </div>
               <div class="relative mb-4 w-full">
@@ -179,7 +180,7 @@
                   id="last_name"
                   ref="last_name"
                   class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-                  :value="edit.user.last_name"
+                  :value="edit_user.last_name"
                 />
               </div>
             </div>
@@ -193,7 +194,7 @@
                 id="email"
                 ref="email"
                 class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-                :value="edit.user.email"
+                :value="edit_user.email"
               />
             </div>
 
@@ -233,7 +234,7 @@
                 id="addr"
                 ref="address"
                 class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-                :value="edit.user.address"
+                :value="edit_user.address"
               />
             </div>
 
@@ -247,7 +248,7 @@
                   id="contact"
                   ref="contact"
                   class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-                  :value="edit.user.contact"
+                  :value="edit_user.contact"
                 />
               </div>
               <div class="relative mb-4 w-full">
@@ -259,7 +260,7 @@
                   id="bday"
                   ref="birthday"
                   class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-                  :value="edit.user.birthday"
+                  :value="edit_user.birthday"
                 />
               </div>
             </div>
@@ -273,7 +274,7 @@
               Save
             </button>
             <button
-              @click="initModal(false)"
+              @click="initEditModal(false)"
               class="inline-flex text-white bg-red-700 border-0 py-1 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg"
             >
               Cancel
@@ -282,6 +283,27 @@
         </div>
       </DialogPanel>
     </Dialog>
+
+
+    <Dialog
+      :open="modal.add"
+      @close="initAddModal"
+      class="z-50 bg-opacity-50 absolute bg-black w-full p-4 overflow-x-hidden overflow-y-auto inset-0 h-[calc(100%-1rem)] max-h-full"
+    >
+      <DialogPanel
+        class="relative w-full max-w-5xl max-h-full justify-center mx-auto mt-24"
+      >
+        <div class="relative bg-white rounded-lg shadow p-8">
+          <DialogTitle class="text-xl font-bold mb-4 border-b"
+            >Add User</DialogTitle
+          >
+          <DialogDescription>
+            add
+          </DialogDescription>
+        </div>
+      </DialogPanel>
+    </Dialog>
+
   </div>
 </template>
 <script>
@@ -300,10 +322,11 @@ export default {
   data() {
     return {
       users: "",
-      isModalOpen: false,
-      edit: {
-        user: "",
+      modal: {
+        add: false,
+        edit: false
       },
+      edit_user: '',
       selected_users: [],
     };
   },
@@ -339,16 +362,20 @@ export default {
         });
     },
 
-    initModal(value, user) {
-      this.isModalOpen = value;
-      this.edit.user = user;
+    initEditModal(value, user) {
+      this.modal.edit = value;
+      this.edit_user = user;
+    },
+
+    initAddModal(value) {
+      this.modal.add = value;
     },
 
     updateUser() {
       const AuthStr = "Bearer ".concat(userStore().user.access_token);
       axios({
         method: "patch",
-        url: `/api/users/${this.edit.user.id}`,
+        url: `/api/users/${this.edit_user.id}`,
         params: {
           first_name: this.$refs.first_name.value,
           last_name: this.$refs.last_name.value,
@@ -362,8 +389,13 @@ export default {
         headers: { Authorization: AuthStr },
       })
         .then((res) => {
-          this.isModalOpen = false;
-          this.edit.user = "";
+          this.modal.edit = false;
+          this.users.forEach((user, index) => {
+            if(user.id == this.edit_user.id) {
+              this.users[index] = res.data;
+            }
+          })
+          this.edit_user = "";
         })
         .catch((err) => {});
     },
