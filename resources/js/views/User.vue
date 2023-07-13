@@ -284,7 +284,6 @@
       </DialogPanel>
     </Dialog>
 
-
     <Dialog
       :open="modal.add"
       @close="initAddModal"
@@ -298,12 +297,146 @@
             >Add User</DialogTitle
           >
           <DialogDescription>
-            add
+            <div class="flex flex-row gap-4">
+              <div class="relative mb-4 w-full">
+                <label
+                  for="add_first_name"
+                  class="leading-7 text-sm text-gray-600"
+                  >First Name</label
+                >
+                <input
+                  v-model="form.addUser.first_name"
+                  type="text"
+                  id="add_first_name"
+                  class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                />
+              </div>
+
+              <div class="relative mb-4 w-full">
+                <label
+                  for="add_last_name"
+                  class="leading-7 text-sm text-gray-600"
+                  >Last Name</label
+                >
+                <input
+                  type="text"
+                  v-model="form.addUser.last_name"
+                  id="add_last_name"
+                  class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                />
+              </div>
+            </div>
+
+            <div class="relative mb-4">
+              <label for="add_email" class="leading-7 text-sm text-gray-600"
+                >Email</label
+              >
+              <input
+                type="email"
+                v-model="form.addUser.email"
+                id="add_email"
+                class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+              />
+            </div>
+
+            <div class="flex flex-row gap-4">
+              <div class="relative mb-4 w-full">
+                <label
+                  for="add_password"
+                  class="leading-7 text-sm text-gray-600"
+                  >Password</label
+                >
+                <input
+                  type="password"
+                  v-model="form.addUser.password"
+                  id="add_password"
+                  class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                />
+              </div>
+
+              <div class="relative mb-4 w-full">
+                <label
+                  for="add_confirm_pass"
+                  class="leading-7 text-sm text-gray-600"
+                  >Confirm Password</label
+                >
+                <input
+                  type="password"
+                  v-model="form.addUser.confirm_password"
+                  id="add_confirm_pass"
+                  class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                />
+              </div>
+            </div>
+
+            <div class="relative mb-4 w-full">
+              <label for="add_contact" class="leading-7 text-sm text-gray-600"
+                >Address</label
+              >
+              <input
+                type="text"
+                id="add_address"
+                v-model="form.addUser.address"
+                class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+              />
+            </div>
+
+            <div class="flex flex-row gap-4 mb-4">
+              <div class="relative mb-4 w-full">
+                <label for="add_contact" class="leading-7 text-sm text-gray-600"
+                  >Contact</label
+                >
+                <input
+                  type="number"
+                  id="add_contact"
+                  v-model="form.addUser.contact"
+                  class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                />
+              </div>
+
+              <div class="relative mb-4 w-full">
+                <label
+                  for="add_birthday"
+                  class="leading-7 text-sm text-gray-600"
+                  >Birthday</label
+                >
+                <input
+                  type="date"
+                  v-model="form.addUser.birthday"
+                  id="add_birthday"
+                  class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                />
+              </div>
+
+              <div class="relative mb-4 w-full">
+                <label for="role" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Role</label>
+                <select id="role" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" v-model="form.addUser.role">
+                  <option value="" selected>Choose role</option>
+                  <option value="freelancer">Freelancer</option>
+                  <option value="client">Client</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </div>
+
+            </div>
+
+            <div class="flex flex-row justify-center gap-4">
+              <button
+                class="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg"
+                @click="createUser"
+              >
+                Add User
+              </button>
+              <button
+                class="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg"
+              >
+                Cancel
+              </button>
+            </div>
           </DialogDescription>
         </div>
       </DialogPanel>
     </Dialog>
-
   </div>
 </template>
 <script>
@@ -324,9 +457,22 @@ export default {
       users: "",
       modal: {
         add: false,
-        edit: false
+        edit: false,
       },
-      edit_user: '',
+      form: {
+        addUser: {
+          first_name: '',
+          last_name: '',
+          email: '',
+          address: '',
+          contact: '',
+          birthday: '',
+          password: '',
+          confirm_password: '',
+          role: '',
+        }
+      },
+      edit_user: "",
       selected_users: [],
     };
   },
@@ -346,6 +492,34 @@ export default {
   computed: {},
 
   methods: {
+    createUser() {
+      axios({
+        method: "post",
+        url: `/api/users/`,
+        params: {
+          first_name: this.form.addUser.first_name,
+          last_name: this.form.addUser.last_name,
+          email: this.form.addUser.email,
+          password: this.form.addUser.password,
+          confirm_password: this.form.addUser.confirm_password,
+          contact: this.form.addUser.contact,
+          address: this.form.addUser.address,
+          birthday: this.form.addUser.birthday,
+          role: this.form.addUser.role
+        },
+        headers: {
+          Authorization: `Bearer`.concat(userStore().user.access_token),
+        },
+      })
+      .then((res) => {console.log(res.data);
+        this.users.unshift(res.data);
+        this.modal.add = false;
+      })
+      .catch((err) => {
+        console.log(err.response.data);
+      });
+    },
+
     getAllUsers() {
       axios({
         method: "get",
@@ -354,12 +528,12 @@ export default {
           Authorization: `Bearer`.concat(userStore().user.access_token),
         },
       })
-        .then((res) => {
-          this.users = res.data;
-        })
-        .catch((err) => {
-          console.log(err.response.data);
-        });
+      .then((res) => {
+        this.users = res.data;
+      })
+      .catch((err) => {
+        console.log(err.response.data);
+      });
     },
 
     initEditModal(value, user) {
@@ -391,10 +565,10 @@ export default {
         .then((res) => {
           this.modal.edit = false;
           this.users.forEach((user, index) => {
-            if(user.id == this.edit_user.id) {
+            if (user.id == this.edit_user.id) {
               this.users[index] = res.data;
             }
-          })
+          });
           this.edit_user = "";
         })
         .catch((err) => {});
