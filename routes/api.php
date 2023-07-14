@@ -28,6 +28,7 @@ Route::group(['prefix' => 'dashboard'], function ($router) {
 Route::group(['prefix' => 'users'], function ($router) {
     Route::get('/', 'App\Http\Controllers\UserController@index')->middleware('auth');
     Route::post('/', 'App\Http\Controllers\UserController@store')->middleware('auth');
+    Route::delete('/', 'App\Http\Controllers\UserController@destroy')->middleware('auth');
     Route::get('/search', 'App\Http\Controllers\UserController@search')->middleware('auth');
     Route::patch('/{id}', 'App\Http\Controllers\UserController@update')->middleware('auth');
 });

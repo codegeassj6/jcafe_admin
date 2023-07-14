@@ -37,6 +37,12 @@
                   @click="modal.add = true"
                   >Add User</a
                 >
+                <a
+                  role="button"
+                  class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
+                  @click="deleteUser()"
+                  >Delete User</a
+                >
               </div>
             </PopoverPanel>
           </Popover>
@@ -492,6 +498,21 @@ export default {
   computed: {},
 
   methods: {
+    deleteUser() {
+      const AuthStr = 'Bearer '.concat(userStore().user.access_token);
+      axios({
+          method: 'delete',
+          params: {id: this.selected_users},
+          url: `/api/users`,
+          headers: {Authorization: AuthStr}
+      }).then(res => {console.log(res.data);
+        this.users = res.data;
+        this.selected_users = [];
+      }).catch(err => {
+
+      });
+    },
+
     createUser() {
       axios({
         method: "post",

@@ -71,9 +71,11 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
+      User::whereIn('id', $request->input('id'))->delete();
 
+      return $this->index();
     }
 
     public function search(Request $request) {
