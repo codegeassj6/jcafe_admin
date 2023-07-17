@@ -4,7 +4,7 @@
 
     <div class="pt-20 ml-64 px-4">
       <div
-        class="relative overflow-x-auto shadow-lg sm:rounded-lg border rounded p-4"
+        class="relative overflow-x-auto shadow-lg sm:rounded-lg border rounded p-4 mb-4"
         v-for="order in orders"
         :key="order.id"
       >

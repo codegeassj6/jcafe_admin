@@ -1,10 +1,12 @@
 7
 
-test if role is not admin
+Resume:
+post
 
-validation in all Controller
+
+Task:
+- test if role is not admin
+- validation in all Controller
 logout error
-
-
-middleware api
-laravel validator
+- middleware api
+- laravel validator

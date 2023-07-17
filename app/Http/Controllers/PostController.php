@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Auth;
 
 class PostController extends Controller
 {
@@ -26,7 +27,14 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $post = Post::create([
+          'message' => $request->input('message'),
+          'user_id' => Auth::id(),
+        ]);
+        $post->getUserDetails;
+        $post->getComments()->orderBy('created_at', 'desc');
+
+        return $post;
     }
 
     /**

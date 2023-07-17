@@ -3,7 +3,7 @@
     <Aside />
 
     <div class="ml-64 pt-20 px-4">
-      <form class="mb-4" @submit.prevent="post">
+      <div class="mb-4">
         <div
           class="w-full mb-4 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600"
         >
@@ -15,7 +15,7 @@
               class="w-full px-0 text-sm text-gray-900 bg-white border-0 focus:outline-none dark:bg-gray-800 focus:ring-0 dark:text-white dark:placeholder-gray-400"
               placeholder="Write a comment..."
               required
-              ref="message"
+              v-model="form.post.message"
             ></textarea>
           </div>
           <div
@@ -81,14 +81,15 @@
               </button>
             </div>
             <button
-              type="submit"
-              class="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-indigo-700 rounded-lg focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-900 hover:bg-indigo-600"
+              type="button"
+              @click="createPost"
+              class="inline-flex items-center py-1 px-12 font-medium text-center text-white bg-indigo-700 rounded-lg focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-900 hover:bg-indigo-600"
             >
-              Post comment
+              Post
             </button>
           </div>
         </div>
-      </form>
+      </div>
       <div class="border rounded mb-4" v-for="post in posts" :key="post.id">
         <div class="flex flex-row gap-4 p-4">
           <img
@@ -173,6 +174,12 @@ export default {
   data() {
     return {
       posts: '',
+      form: {
+        post: {
+          attachments: '',
+          message: '',
+        }
+      }
     };
   },
   components: {
@@ -197,23 +204,24 @@ export default {
       });
     },
 
-    post() {
+    createPost() {
       const AuthStr = 'Bearer '.concat(userStore().user.access_token);
       axios({
           method: 'post',
           params: {
-
+            message: this.form.post.message,
+            attachments: this.form.post.attachments,
           },
           url: `/api/posts`,
           headers: {Authorization: AuthStr}
-      }).then(res => {
-
+      }).then(res => {console.log(res.data);
+        this.posts.unshift(res.data);
+        this.form.post.message = '';
+        this.form.post.attachments = '';
       }).catch(err => {
-
+        console.log(err.response.data.message);
       });
     },
-
-
   },
 
   watch: {
