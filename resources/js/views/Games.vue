@@ -3,7 +3,7 @@
     <Aside />
 
     <div class="pt-20 px-4 ml-16 sm:ml-64">
-      <div class="relative overflow-x-auto shadow-md sm:rounded-lg p-4 border">
+      <div class="relative overflow-x-auto overflow-y-clip shadow-md sm:rounded-lg p-8 border">
         <div
           class="flex items-center justify-between pb-4 bg-white dark:bg-gray-900"
         >
@@ -30,7 +30,7 @@
             <PopoverPanel
               class="z-10 bg-white absolute mt-2 divide-y divide-gray-100 shadow w-56"
             >
-              <div class="py-2 text-sm text-gray-700">
+              <div class="py-2 text-sm text-gray-700 z-10">
                 <a
                   @click="modal.addGames = true"
                   role="button"
@@ -333,6 +333,12 @@ export default {
       }).then(res => {
         this.games.unshift(res.data)
         this.modal.addGames = false;
+
+        this.form.addGames.name = '';
+        this.form.addGames.image = '';
+        this.form.addGames.genre = '';
+        this.form.addGames.trailer_link = '';
+        this.form.addGames.rating = '';
       }).catch(err => {
         console.log(err.response.data.message);
       });

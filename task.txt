@@ -5,6 +5,7 @@ post
 
 
 Task:
+edit in games
 - test if role is not admin
 - validation in all Controller
 logout error

@@ -2,7 +2,7 @@
   <div>
     <Aside />
 
-    <div class="ml-64 pt-20 px-4">
+    <div class="md:ml-64 ml-16 xl:max-w-7xl pt-20 px-4">
       <div class="mb-4">
         <div
           class="w-full mb-4 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600"
@@ -12,11 +12,52 @@
             <textarea
               id="comment"
               rows="8"
-              class="w-full px-0 text-sm text-gray-900 bg-white border-0 focus:outline-none dark:bg-gray-800 focus:ring-0 dark:text-white dark:placeholder-gray-400"
+              class="w-full mb-2 px-0 text-sm text-gray-900 bg-white border-0 focus:outline-none dark:bg-gray-800 focus:ring-0 dark:text-white dark:placeholder-gray-400"
               placeholder="Write a comment..."
               required
               v-model="form.post.message"
             ></textarea>
+
+            <div
+              class="grid grid-cols-5 gap-4 mb-4"
+              v-if="form.post.attachments.images.temp_link.length"
+            >
+              <div
+                class="relative"
+                v-for="(image, index) in form.post.attachments.images.temp_link"
+                :key="index"
+              >
+                <div class="absolute right-0 top-0 z-10">
+                  <button
+                    class="inline-flex text-indigo-700 border-0 focus:outline-none bg-gray-400 p-1 hover:text-indigo-300 rounded"
+                    @click="removeAttachFiles(image)"
+                  >
+                    <i class="fa-solid fa-xmark"></i>
+                  </button>
+                </div>
+                <img :src="image" class="h-32 w-full rounded" alt="" />
+              </div>
+            </div>
+
+            <div v-if="form.post.attachments.files.name.length">
+              <div
+                class="flex flex-row justify-between border rounded p-2 w-full mb-2"
+                v-for="(name, index) in form.post.attachments.files.name"
+                :key="index"
+              >
+                <div class="text-indigo-700">
+                  {{ name }}
+                </div>
+                <div>
+                  <button
+                    class="inline-flex text-indigo-700 border-0 focus:outline-none hover:text-indigo-300 rounded"
+                    @click="removeAttachFiles(name)"
+                  >
+                    <i class="fa-solid fa-xmark"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
           <div
             class="flex items-center justify-between px-3 py-2 border-t dark:border-gray-600"
@@ -43,7 +84,13 @@
                   </svg>
                   <span class="sr-only">Attach file</span>
                 </button>
-                <input type="file" ref="attachFiles" class="hidden" @change="morphAttachFiles">
+                <input
+                  type="file"
+                  ref="attachFiles"
+                  class="hidden"
+                  @change="morphAttachFiles"
+                  multiple
+                />
               </div>
             </div>
             <button
@@ -66,7 +113,13 @@
             class="rounded-full"
           />
           <div>
-            <h4 class="text-xl font-bold text-indigo-700">{{ post.get_user_details.first_name + ' ' + post.get_user_details.last_name }}</h4>
+            <h4 class="text-xl font-bold text-indigo-700">
+              {{
+                post.get_user_details.first_name +
+                " " +
+                post.get_user_details.last_name
+              }}
+            </h4>
             <p class="text-gray-400">Friday, May 12, 2020</p>
           </div>
           <div class="ms-auto">
@@ -91,7 +144,10 @@
             </button>
           </div>
         </div>
-        <div class="bg-indigo-50 py-4 px-12 flex flex-col gap-4 border" v-if="post.get_comments">
+        <div
+          class="bg-indigo-50 py-4 px-12 flex flex-col gap-4 border"
+          v-if="post.get_comments"
+        >
           <div class="flex flex-row gap-4">
             <img
               src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
@@ -99,7 +155,9 @@
               class="rounded-full w-12 h-12"
             />
             <div>
-              <h4 class="text-lg text-indigo-700 font-bold">Jhon Rey Repuela</h4>
+              <h4 class="text-lg text-indigo-700 font-bold">
+                Jhon Rey Repuela
+              </h4>
               <p class="text-gray-400">Friday, May 12, 2020</p>
             </div>
             <div class="ms-auto">
@@ -111,7 +169,8 @@
           </div>
           <div class="">
             <a role="button"
-              ><i class="fa-regular fa-thumbs-up mr-2"></i><span>4 likes</span></a
+              ><i class="fa-regular fa-thumbs-up mr-2"></i
+              ><span>4 likes</span></a
             >
           </div>
         </div>
@@ -133,20 +192,28 @@
   </div>
 </template>
 <script>
-import Aside from '../components/Aside.vue';
-import { userStore } from '../stores/userStore';
+import Aside from "../components/Aside.vue";
+import { userStore } from "../stores/userStore";
 
 export default {
   data() {
     return {
-      posts: '',
+      posts: "",
       form: {
         post: {
-          attachments: '',
-          message: '',
-          attachments: [],
-        }
-      }
+          attachments: {
+            files: {
+              name: [],
+            },
+            images: {
+              temp_link: [],
+            },
+            isExist: false,
+          },
+          message: "",
+          formData: "",
+        },
+      },
     };
   },
   components: {
@@ -162,41 +229,97 @@ export default {
       this.$refs.attachFiles.click();
     },
 
+    getFileFormat(fileName) {
+      var re = /(?:\.([^.]+))?$/;
+      var ext = re.exec(fileName)[1];
+      return ext.trim();
+    },
+
+    removeAttachFiles(params) {
+      this.form.post.attachments.images.temp_link.forEach((link, index) => {
+        if(link == params) {
+          this.form.post.attachments.images.temp_link.splice(index, 1);
+        }
+      });
+
+      this.form.post.attachments.files.name.forEach((name, index) => {
+        if(name == params) {
+          this.form.post.attachments.files.name.splice(index, 1);
+        }
+      });
+
+    },
+
     morphAttachFiles() {
-      const formData = new FormData;
-      formData.append('files', this.form.post.attachments);
+      if(!this.$refs.attachFiles.files.length) {
+        return false;
+      }
+
+      this.form.post.attachments.images.temp_link = [];
+      this.form.post.attachments.files.name = [];
+
+      let formData = new FormData();
+      for (
+        let index = 0;
+        index < this.$refs.attachFiles.files.length;
+        index++
+      ) {
+        if (
+          this.getFileFormat(this.$refs.attachFiles.files[index].name) ==
+            "png" ||
+          this.getFileFormat(this.$refs.attachFiles.files[index].name) ==
+            "jpeg" ||
+          this.getFileFormat(this.$refs.attachFiles.files[index].name) == "jpg"
+        ) {
+          this.form.post.attachments.images.temp_link.push(
+            URL.createObjectURL(this.$refs.attachFiles.files[index])
+          );
+        } else {
+          this.form.post.attachments.files.name.push(
+            this.$refs.attachFiles.files[index].name
+          );
+        }
+
+        formData.append("files[]", this.$refs.attachFiles.files[index]);
+      }
+      this.form.post.attachments.isExist = true;
+      this.form.post.formData = formData;
     },
 
     getPost() {
-      const AuthStr = 'Bearer '.concat(userStore().user.access_token);
+      const AuthStr = "Bearer ".concat(userStore().user.access_token);
       axios({
-          method: 'get',
-          url: `/api/posts`,
-          headers: {Authorization: AuthStr}
-      }).then(res => {
-        this.posts = res.data
-      }).catch(err => {
-
-      });
+        method: "get",
+        url: `/api/posts`,
+        headers: { Authorization: AuthStr },
+      })
+        .then((res) => {
+          this.posts = res.data;
+        })
+        .catch((err) => {});
     },
 
     createPost() {
-      const AuthStr = 'Bearer '.concat(userStore().user.access_token);
+      const AuthStr = "Bearer ".concat(userStore().user.access_token);
       axios({
-          method: 'post',
-          params: {
-            message: this.form.post.message,
-            attachments: this.form.post.attachments,
-          },
-          url: `/api/posts`,
-          headers: {Authorization: AuthStr}
-      }).then(res => {console.log(res.data);
-        this.posts.unshift(res.data);
-        this.form.post.message = '';
-        this.form.post.attachments = '';
-      }).catch(err => {
-        console.log(err.response.data.message);
-      });
+        method: "post",
+        params: {
+          message: this.form.post.message,
+        },
+        data: this.form.post.formData,
+        url: `/api/posts`,
+        headers: { Authorization: AuthStr },
+      })
+        .then((res) => {
+          console.log(res.data);
+          // this.posts.unshift(res.data);
+          this.form.post.message = "";
+          this.form.post.attachments.files.name = [];
+          this.form.post.attachments.images.temp_link = [];
+        })
+        .catch((err) => {
+          console.log(err.response.data.message);
+        });
     },
   },
 

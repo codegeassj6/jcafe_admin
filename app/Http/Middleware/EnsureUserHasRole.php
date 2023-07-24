@@ -7,18 +7,19 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Auth;
 
-class AdminAuthorization
+class EnsureUserHasRole
 {
     /**
      * Handle an incoming request.
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next,): Response
+    public function handle(Request $request, Closure $next): Response
     {
-      dd($request->user());
-      if ($request->user()->hasRole('admin')) {
-        dd('yes');
-      }
+        if(Auth::user()->role != 'admin') {
+          return response()->json(['message' => 'No privilege'], 401);
+        }
+
+        return $next($request);
     }
 }
