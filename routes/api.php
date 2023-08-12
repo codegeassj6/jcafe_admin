@@ -42,9 +42,10 @@ Route::group(['prefix' => 'posts'], function ($router) {
 Route::group(['prefix' => 'games'], function ($router) {
   Route::get('/', 'App\Http\Controllers\GameController@index');
   Route::post('/', 'App\Http\Controllers\GameController@store');
+  Route::post('/update', 'App\Http\Controllers\GameController@update');
   Route::get('/search', 'App\Http\Controllers\GameController@search');
   Route::delete('/', 'App\Http\Controllers\GameController@destroy');
-})->middleware('auth.admin');
+})->middleware(['auth.admin', 'api']);
 
 Route::group(['prefix' => 'orders'], function ($router) {
   Route::get('/', 'App\Http\Controllers\OrderController@index');

@@ -67,9 +67,36 @@ class GameController extends Controller
   /**
    * Update the specified resource in storage.
    */
-  public function update(Request $request, Game $game)
+  public function update(Request $request)
   {
-    //
+    $temp_game_data = Game::whereId($request->input('id'))->firstOrFail();
+
+    $validator = Validator::make($request->all(), [
+      'name' => 'string|unique:games,name',
+      'genre' => 'string|nullable',
+      'trailer_link' => 'url|nullable',
+      'image' => 'mimes:png,jpg',
+      'rating' => 'integer|min:1|max:5|nullable'
+    ]);
+
+    if ($validator->fails()) {
+      return response()->json(['message' => $validator->messages()->get('*')], 500);
+    }
+    if($request->file('image')) {
+      Storage::disk('s3')->putFileAs('/games', $request->file('image'), $request->file('image')->hashName());
+    }
+
+    $game = Game::whereId($request->input('id'))->update([
+      'name' => $request->input('name') ? $request->input('name') : $temp_game_data->name,
+      'genre' => $request->input('genre') ? $request->input('genre') : $temp_game_data->genre,
+      'trailer_link' => $request->input('trailer_link') ? $request->input('trailer_link') : $temp_game_data->trailer_link,
+      'image' => $request->input('genre') ? $request->file('image')->hashName() : $temp_game_data->image,
+      'rating' => $request->input('rating') ? $request->input('rating') : $temp_game_data->rating,
+    ]);
+
+    $game_data = Game::whereId($request->input('id'))->first();
+
+    return $game_data;
   }
 
   /**

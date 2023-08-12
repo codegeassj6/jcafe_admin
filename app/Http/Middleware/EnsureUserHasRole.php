@@ -16,6 +16,10 @@ class EnsureUserHasRole
      */
     public function handle(Request $request, Closure $next): Response
     {
+        if(!Auth::check()) {
+          return response()->json(['message' => 'Token Expire'], 401);
+        }
+
         if(Auth::user()->role != 'admin') {
           return response()->json(['message' => 'No privilege'], 401);
         }

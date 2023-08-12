@@ -45,12 +45,14 @@ class PostController extends Controller
       'user_id' => Auth::id(),
     ]);
 
-    foreach($request->file('files') as $file) {
-      Storage::disk('s3')->putFileAs('/posts', $file, $file->hashName());
-      PostAttachment::create([
-        'post_id' => $post->id,
-        'file_link' => $file->hashName(),
-      ]);
+    if($request->file('files')) {
+      foreach($request->file('files') as $file) {
+        Storage::disk('s3')->putFileAs('/posts', $file, $file->hashName());
+        PostAttachment::create([
+          'post_id' => $post->id,
+          'file_link' => $file->hashName(),
+        ]);
+      }
     }
 
     $post->getUserDetails;

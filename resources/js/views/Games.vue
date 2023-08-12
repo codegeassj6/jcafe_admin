@@ -126,11 +126,12 @@
                 </div>
               </td>
               <td class="px-6 py-4">
-                <a
+                <button
                   href="#"
                   class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                  @click="setEditModal(true), form.editGames.data = game"
                   >Edit
-                </a>
+                </button>
               </td>
             </tr>
           </tbody>
@@ -140,7 +141,7 @@
 
     <Dialog
       :open="modal.addGames"
-      @close="setIsOpen"
+      @close="setAddGames"
       class="z-50 bg-opacity-50 absolute bg-black w-full p-4 overflow-x-hidden overflow-y-auto inset-0 h-[calc(100%-1rem)] max-h-full"
     >
       <DialogPanel
@@ -261,6 +262,126 @@
         </div>
       </DialogPanel>
     </Dialog>
+
+
+
+
+
+    <Dialog :open="modal.editGames" @close="setEditModal" class="z-50 bg-opacity-50 absolute bg-black w-full p-4 overflow-x-hidden overflow-y-auto inset-0 h-[calc(100%-1rem)] max-h-full">
+      <DialogPanel class="relative w-full max-w-5xl max-h-full justify-center mx-auto mt-24 bg-white rounded-lg shadow p-8">
+        <DialogTitle class="text-xl font-bold mb-4 border-b">Edit Game</DialogTitle>
+          <DialogDescription>
+            <div class="relative mb-4">
+              <label for="name" class="leading-7 text-sm text-gray-600"
+                >Name</label
+              >
+              <input
+                type="text"
+                :placeholder="form.editGames.data.name"
+                v-model="form.editGames.name"
+                class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+              />
+            </div>
+
+            <div class="flex flex-row gap-4 mb-4">
+              <div class="w-full">
+                <label for="genre" class="leading-7 text-sm text-gray-600"
+                  >Genre</label
+                >
+                <input
+                  type="text"
+                  :placeholder="form.editGames.data.genre"
+                  v-model="form.editGames.genre"
+                  class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                />
+              </div>
+
+              <div class="w-full">
+                <label for="rating" class="leading-7 text-sm text-gray-600"
+                >Rating</label
+              >
+              <input
+                type="number"
+                min="1"
+                max="5"
+                :placeholder="form.editGames.data.rating"
+                v-model="form.editGames.rating"
+                class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+              />
+              </div>
+
+            </div>
+
+            <div class="relative mb-4">
+              <label for="link" class="leading-7 text-sm text-gray-600"
+                >Trailer Link</label
+              >
+              <input
+                type="url"
+                :placeholder="form.editGames.data.trailer_link"
+                v-model="form.editGames.trailer_link"
+                class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+              />
+            </div>
+
+            <div class="flex items-center justify-center w-full mb-8">
+              <label
+                for="edit_dropzone-file"
+                class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+              >
+                <div
+                  class="flex flex-col items-center justify-center pt-5 pb-6"
+                >
+                  <svg
+                    class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 20 16"
+                  >
+                    <path
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                    />
+                  </svg>
+                  <p class="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                    <span class="font-semibold">Click to upload</span> or drag
+                    and drop
+                  </p>
+                  <p class="text-xs text-gray-500 dark:text-gray-400">
+                    SVG, PNG, JPG or GIF (MAX. 800x400px)
+                  </p>
+                </div>
+                <input id="edit_dropzone-file" @change="dropzoneEditGames" type="file" class="hidden" accept="image/png, image/jpeg" />
+              </label>
+            </div>
+
+        </DialogDescription>
+
+        <div class="flex flex-row gap-4 justify-center">
+              <button
+                class="inline-flex text-white bg-indigo-700 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg"
+                type="button"
+                @click="updateGame"
+              >
+                Update
+              </button>
+
+              <button
+                type="button"
+                class="inline-flex text-white bg-red-700 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg"
+                @click="modal.editGames = false"
+              >
+                Cancel
+              </button>
+            </div>
+
+      </DialogPanel>
+    </Dialog>
+
   </div>
 </template>
 <script>
@@ -283,6 +404,7 @@ export default {
       selected_games: [],
       modal: {
         addGames: false,
+        editGames: false,
       },
       form: {
         addGames: {
@@ -291,6 +413,15 @@ export default {
           trailer_link: '',
           image: '',
           rating: '',
+        },
+
+        editGames: {
+          data: '',
+          name: '',
+          genre: '',
+          rating: '',
+          trailer_link: '',
+          editGames: '',
         }
       }
     };
@@ -312,8 +443,16 @@ export default {
   computed: {},
 
   methods: {
+    setEditModal(condition) {
+      this.modal.editGames = condition;
+    },
+
     dropzoneAddGames(e) {
       this.form.addGames.image = e.target.files[0] || e.dataTransfer.files[0];
+    },
+
+    dropzoneEditGames(e) {
+      this.form.editGames.image = e.target.files[0] || e.dataTransfer.files[0];
     },
 
     addNewGame() {
@@ -344,7 +483,7 @@ export default {
       });
     },
 
-    setIsOpen(value) {
+    setAddGames(value) {
       this.modal.addGames = value;
     },
 
@@ -398,7 +537,9 @@ export default {
         method: "delete",
         data: { id: this.selected_games },
         url: `/api/games`,
-        headers: { Authorization: AuthStr },
+        headers: {
+          Authorization: AuthStr,
+        },
       })
         .then((res) => {
           // temp
@@ -408,6 +549,45 @@ export default {
           console.log(err.response);
         });
     },
+
+    updateGame() {
+      let formData = new FormData;
+      if(this.form.editGames.image) {
+        formData.append('image', this.form.editGames.image);
+      }
+
+      formData.append('id', this.form.editGames.data.id);
+      formData.append('name', this.form.editGames.name);
+      formData.append('genre', this.form.editGames.genre);
+      formData.append('trailer_link', this.form.editGames.trailer_link);
+      formData.append('rating', this.form.editGames.rating);
+
+      const AuthStr = 'Bearer '.concat(userStore().user.access_token);
+      axios.post(`/api/games/update`, formData, {
+        headers: {
+          Authorization: AuthStr,
+          "Content-Type": "multipart/form-data",
+        }
+      }).then(res => {
+        this.modal.editGames = false;
+        this.form.editGames.name = '';
+        this.form.editGames.image = '';
+        this.form.editGames.genre = '';
+        this.form.editGames.trailer_link = '';
+        this.form.editGames.rating = '';
+
+        this.games.forEach((game, index) => {
+          if(game.id == res.data.id) {
+            this.games.splice(index, 1);
+            this.games.push(res.data);
+          }
+        })
+
+      }).catch(err => {
+        console.log(err.response.data.message);
+      });
+    }
+
   },
 
   watch: {

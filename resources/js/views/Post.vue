@@ -104,7 +104,7 @@
         </div>
       </div>
       <div class="border rounded mb-4" v-for="post in posts" :key="post.id">
-        <div class="flex flex-row gap-4 p-4">
+        <div class="flex flex-row gap-4 pl-4 pr-4 pt-4 pb-2">
           <img
             src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
             alt=""
@@ -129,6 +129,14 @@
         <div class="px-4 mb-4">
           {{ post.message }}
         </div>
+
+        <div>
+
+        </div>
+
+
+
+
         <div class="flex flex-row px-4 gap-4 mb-4">
           <div class="text-indigo-700">
             <i class="fa-solid fa-thumbs-up mr-2"></i>3 likes
@@ -296,7 +304,9 @@ export default {
         .then((res) => {
           this.posts = res.data;
         })
-        .catch((err) => {});
+        .catch((err) => {
+          console.log(err.response);
+        });
     },
 
     createPost() {
@@ -311,8 +321,7 @@ export default {
         headers: { Authorization: AuthStr },
       })
         .then((res) => {
-          console.log(res.data);
-          // this.posts.unshift(res.data);
+          this.posts.unshift(res.data);
           this.form.post.message = "";
           this.form.post.attachments.files.name = [];
           this.form.post.attachments.images.temp_link = [];
