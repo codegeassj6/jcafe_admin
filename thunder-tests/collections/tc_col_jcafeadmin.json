@@ -125,21 +125,21 @@
             "colId": "1c3cf875-1165-43a7-81c3-3daf6a1ddb2a",
             "containerId": "b0479c11-969a-4bc8-9a90-a6e690043b9b",
             "name": "Store",
-            "url": "api/games?name=COD&genre=Shooting&trailer_link=https://www.upwork.com/nx/find-work/&rating=4",
+            "url": "api/games?name=God of War 4&genre=Slash&trailer_link=https://www.upwork.com/nx/find-work/&rating=5",
             "method": "POST",
             "sortNum": 50000,
             "created": "2023-07-10T14:19:10.258Z",
-            "modified": "2023-07-10T14:24:35.979Z",
+            "modified": "2023-08-16T06:35:05.024Z",
             "headers": [],
             "params": [
                 {
                     "name": "name",
-                    "value": "COD",
+                    "value": "God of War 4",
                     "isPath": false
                 },
                 {
                     "name": "genre",
-                    "value": "Shooting",
+                    "value": "Slash",
                     "isPath": false
                 },
                 {
@@ -149,7 +149,7 @@
                 },
                 {
                     "name": "rating",
-                    "value": "4",
+                    "value": "5",
                     "isPath": false
                 }
             ],
@@ -160,7 +160,7 @@
                 "files": [
                     {
                         "name": "image",
-                        "value": "..\\..\\..\\..\\..\\Users\\ATG\\Downloads\\image222.png"
+                        "value": "..\\..\\..\\..\\Downloads\\download.jpg"
                     }
                 ]
             },
