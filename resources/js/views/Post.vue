@@ -126,16 +126,59 @@
             <i class="fa-solid fa-ellipsis-vertical"></i>
           </div>
         </div>
-        <div class="px-4 mb-4">
+        <div class="px-4 mb-2">
           {{ post.message }}
         </div>
 
-        <div>
+        <div class="px-4 mb-2 text-indigo-700">
+          <!-- <div class="grid grid-cols-1 mb-4 p-8 px-64 rounded bg-indigo-50">
+            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" class="w-full h-96">
+          </div> -->
 
+          <div class="flex flex-row mb-4 p-8 rounded bg-indigo-50">
+            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" class="w-full h-96 border border-indigo-700">
+            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" class="w-full h-96 border border-indigo-700">
+          </div>
+
+          <!-- <div class="flex flex-row mb-4 p-8 rounded bg-indigo-50">
+            <div class="w-full">
+              <img
+                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                alt=""
+                class="h-96 w-full border border-indigo-700"
+              />
+            </div>
+            <div class="flex flex-col w-full">
+              <img
+                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                alt=""
+                class="w-full h-48 border border-indigo-700"
+              />
+              <img
+                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                alt=""
+                class="w-full h-48 border border-indigo-700"
+              />
+            </div>
+          </div> -->
+
+          <!-- <div class="grid grid-cols-2 mb-4 p-8 rounded bg-indigo-50">
+            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" class="w-full h-96 border border-indigo-700">
+            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" class="w-full h-96 border border-indigo-700">
+            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" class="w-full h-96 border border-indigo-700">
+            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" class="w-full h-96 border border-indigo-700">
+          </div> -->
+
+
+          <div
+            class="flex flex-row justify-between border px-4 py-1 rounded bg-indigo-50"
+          >
+            <h3>file.txt</h3>
+            <div class="">
+              <a href="#!"><i class="fa-solid fa-download"></i></a>
+            </div>
+          </div>
         </div>
-
-
-
 
         <div class="flex flex-row px-4 gap-4 mb-4">
           <div class="text-indigo-700">
@@ -152,36 +195,41 @@
             </button>
           </div>
         </div>
-        <div
-          class="bg-indigo-50 py-4 px-12 flex flex-col gap-4 border"
-          v-if="post.get_comments"
-        >
-          <div class="flex flex-row gap-4">
-            <img
-              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-              alt=""
-              class="rounded-full w-12 h-12"
-            />
+
+        <div v-if="post.get_comments.length">
+          <div
+            class="bg-indigo-50 py-4 px-12 flex flex-col gap-4 border"
+            v-for="comment in post.get_comments"
+            :key="comment.id"
+          >
+            <div class="flex flex-row gap-4">
+              <img
+                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                alt=""
+                class="rounded-full w-12 h-12"
+              />
+              <div>
+                <h4 class="text-lg text-indigo-700 font-bold">
+                  Jhon Rey Repuela
+                </h4>
+                <p class="text-gray-400">Friday, May 12, 2020</p>
+              </div>
+              <div class="ms-auto">
+                <i class="fa-solid fa-ellipsis-vertical"></i>
+              </div>
+            </div>
             <div>
-              <h4 class="text-lg text-indigo-700 font-bold">
-                Jhon Rey Repuela
-              </h4>
-              <p class="text-gray-400">Friday, May 12, 2020</p>
+              {{ comment.message }}
             </div>
-            <div class="ms-auto">
-              <i class="fa-solid fa-ellipsis-vertical"></i>
+            <div class="">
+              <a role="button"
+                ><i class="fa-regular fa-thumbs-up mr-2"></i
+                ><span>4 likes</span></a
+              >
             </div>
-          </div>
-          <div>
-            {{ post.get_comments.message }}
-          </div>
-          <div class="">
-            <a role="button"
-              ><i class="fa-regular fa-thumbs-up mr-2"></i
-              ><span>4 likes</span></a
-            >
           </div>
         </div>
+
         <div class="flex flex-row bg-gray-100 p-2 gap-4 items-end">
           <div
             class="relative w-full border border-indigo-400 rounded p-2 focus:outline-indigo-600"
@@ -202,6 +250,7 @@
 <script>
 import Aside from "../components/Aside.vue";
 import { userStore } from "../stores/userStore";
+import Comment from "../components/Comment.vue";
 
 export default {
   data() {
@@ -226,6 +275,7 @@ export default {
   },
   components: {
     Aside,
+    Comment,
   },
 
   props: {},
@@ -245,21 +295,20 @@ export default {
 
     removeAttachFiles(params) {
       this.form.post.attachments.images.temp_link.forEach((link, index) => {
-        if(link == params) {
+        if (link == params) {
           this.form.post.attachments.images.temp_link.splice(index, 1);
         }
       });
 
       this.form.post.attachments.files.name.forEach((name, index) => {
-        if(name == params) {
+        if (name == params) {
           this.form.post.attachments.files.name.splice(index, 1);
         }
       });
-
     },
 
     morphAttachFiles() {
-      if(!this.$refs.attachFiles.files.length) {
+      if (!this.$refs.attachFiles.files.length) {
         return false;
       }
 
@@ -305,7 +354,7 @@ export default {
           this.posts = res.data;
         })
         .catch((err) => {
-          console.log(err.response);
+          console.log(err.response.data.message);
         });
     },
 
@@ -321,6 +370,7 @@ export default {
         headers: { Authorization: AuthStr },
       })
         .then((res) => {
+          console.log(res.data);
           this.posts.unshift(res.data);
           this.form.post.message = "";
           this.form.post.attachments.files.name = [];

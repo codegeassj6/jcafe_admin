@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 use App\Models\Comment;
+use App\Models\PostAttachment;
 
 class Post extends Model
 {
@@ -21,6 +22,10 @@ class Post extends Model
     }
 
     public function getComments() {
-      return $this->belongsTo(Comment::class, 'user_id' , 'user_id');
+      return $this->hasMany(Comment::class, 'post_id' , 'id');
+    }
+
+    public function getPostAttachments() {
+      return $this->belongsTo(PostAttachment::class, 'id' , 'post_id');
     }
 }

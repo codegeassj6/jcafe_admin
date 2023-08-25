@@ -20,7 +20,12 @@ class PostController extends Controller
     $posts = Post::orderBy('created_at', 'desc')->get();
     foreach ($posts as $post) {
       $post->getUserDetails;
-      $post->getComments()->orderBy('created_at', 'desc');
+      $post->getPostAttachments;
+      if($post->getPostAttachments) {
+        $post->image_url = Storage::disk('s3')->temporaryUrl('posts/'. $post->getPostAttachments->file_link, now()->addMinutes(1));
+      }
+
+      $post->getComments->sortByDesc('created_at');
     }
 
     return $posts;
@@ -44,6 +49,8 @@ class PostController extends Controller
       'message' => $request->input('message'),
       'user_id' => Auth::id(),
     ]);
+
+
 
     if($request->file('files')) {
       foreach($request->file('files') as $file) {

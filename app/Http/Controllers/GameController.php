@@ -49,8 +49,7 @@ class GameController extends Controller
       'name' => $request->input('name'),
       'genre' => $request->input('genre'),
       'trailer_link' => $request->input('trailer_link'),
-      // 'image' => $request->file('image')->hashName(),
-      'image' => Storage::disk('s3')->url($request->file('image')->hashName()),
+      'image' => $request->file('image')->hashName(),
       'rating' => 4
     ]);
 
