@@ -130,54 +130,84 @@
           {{ post.message }}
         </div>
 
-        <div class="px-4 mb-2 text-indigo-700">
-          <!-- <div class="grid grid-cols-1 mb-4 p-8 px-64 rounded bg-indigo-50">
-            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" class="w-full h-96">
-          </div> -->
+        <div class="px-4 mb-2 text-indigo-700" v-if="post.get_post_attachments">
+          <div v-for="attachment in post.get_post_attachments" :key="attachment.id">
+            <div v-if="attachment.file_link.split('.')[1] == 'jpg' || attachment.file_link.split('.')[1] == 'png'">
 
-          <div class="flex flex-row mb-4 p-8 rounded bg-indigo-50">
-            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" class="w-full h-96 border border-indigo-700">
-            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" class="w-full h-96 border border-indigo-700">
+
+            <div
+              class="grid grid-cols-1 mb-4 p-8 px-64 rounded bg-indigo-50"
+              v-if="post.image_count == 1"
+            >
+              <img :src="attachment.image_url" alt="" class="w-full h-96">
+            </div>
+
+
+            <div class="flex flex-row mb-4 p-8 rounded bg-indigo-50" v-if="post.image_count == 2">
+              <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" class="w-full h-96 border border-indigo-700">
+              <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" class="w-full h-96 border border-indigo-700">
+            </div>
+
+
+            <!-- <div class="flex flex-row mb-4 p-8 rounded bg-indigo-50">
+              <div class="w-full">
+                <img
+                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                  alt=""
+                  class="h-96 w-full border border-indigo-700"
+                />
+              </div>
+              <div class="flex flex-col w-full">
+                <img
+                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                  alt=""
+                  class="w-full h-48 border border-indigo-700"
+                />
+                <img
+                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                  alt=""
+                  class="w-full h-48 border border-indigo-700"
+                />
+              </div>
+            </div> -->
+
+
+
+            <!-- <div class="grid grid-cols-2 mb-4 p-8 rounded bg-indigo-50">
+              <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" class="w-full h-96 border border-indigo-700">
+              <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" class="w-full h-96 border border-indigo-700">
+              <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" class="w-full h-96 border border-indigo-700">
+              <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" class="w-full h-96 border border-indigo-700">
+            </div> -->
+
+
+            <!-- <div class="grid grid-cols-2 mb-4 p-8 rounded bg-indigo-50">
+              <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" class="w-full h-96 border border-indigo-700">
+              <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" class="w-full h-96 border border-indigo-700">
+              <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" class="w-full h-96 border border-indigo-700">
+              <div class="opacity-50 relative">
+                <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" class="w-full h-96 border border-indigo-700">
+                <div class="absolute left-1/2 top-1/2 w-64 flex flex-col">
+                  <i class="fa-solid fa-plus fa-2x"></i>
+                </div>
+              </div>
+            </div> -->
+            </div>
+
+
+              <div
+                class="flex flex-row justify-between border px-4 py-1 rounded bg-indigo-50"
+                v-if="attachment.file_link.split('.')[1] !== 'jpg' && attachment.file_link.split('.')[1] !== 'png'"
+              >
+                <h3>{{ attachment.file_link }}</h3>
+                <div class="">
+                  <a href="#!"><i class="fa-solid fa-download"></i></a>
+                </div>
+              </div>
+
+
           </div>
 
-          <!-- <div class="flex flex-row mb-4 p-8 rounded bg-indigo-50">
-            <div class="w-full">
-              <img
-                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                alt=""
-                class="h-96 w-full border border-indigo-700"
-              />
-            </div>
-            <div class="flex flex-col w-full">
-              <img
-                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                alt=""
-                class="w-full h-48 border border-indigo-700"
-              />
-              <img
-                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                alt=""
-                class="w-full h-48 border border-indigo-700"
-              />
-            </div>
-          </div> -->
-
-          <!-- <div class="grid grid-cols-2 mb-4 p-8 rounded bg-indigo-50">
-            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" class="w-full h-96 border border-indigo-700">
-            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" class="w-full h-96 border border-indigo-700">
-            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" class="w-full h-96 border border-indigo-700">
-            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" class="w-full h-96 border border-indigo-700">
-          </div> -->
-
-
-          <div
-            class="flex flex-row justify-between border px-4 py-1 rounded bg-indigo-50"
-          >
-            <h3>file.txt</h3>
-            <div class="">
-              <a href="#!"><i class="fa-solid fa-download"></i></a>
-            </div>
-          </div>
         </div>
 
         <div class="flex flex-row px-4 gap-4 mb-4">
@@ -196,7 +226,7 @@
           </div>
         </div>
 
-        <div v-if="post.get_comments.length">
+        <div class="px-4" v-if="post.get_comments">
           <div
             class="bg-indigo-50 py-4 px-12 flex flex-col gap-4 border"
             v-for="comment in post.get_comments"
@@ -230,7 +260,7 @@
           </div>
         </div>
 
-        <div class="flex flex-row bg-gray-100 p-2 gap-4 items-end">
+        <div class="flex flex-row mx-4 my-4 gap-4 items-end">
           <div
             class="relative w-full border border-indigo-400 rounded p-2 focus:outline-indigo-600"
             contenteditable="true"
@@ -280,9 +310,13 @@ export default {
 
   props: {},
 
-  computed: {},
+  computed: {
+
+  },
 
   methods: {
+
+
     initAttachFile() {
       this.$refs.attachFiles.click();
     },

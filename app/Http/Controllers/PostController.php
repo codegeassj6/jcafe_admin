@@ -22,7 +22,13 @@ class PostController extends Controller
       $post->getUserDetails;
       $post->getPostAttachments;
       if($post->getPostAttachments) {
-        $post->image_url = Storage::disk('s3')->temporaryUrl('posts/'. $post->getPostAttachments->file_link, now()->addMinutes(1));
+        foreach($post->getPostAttachments as $attachment) {
+          $attachment->image_url = Storage::disk('s3')->temporaryUrl('posts/'. $attachment->file_link, now()->addMinutes(1));
+
+          if(pathinfo($attachment->file_link, PATHINFO_EXTENSION) == 'png' || pathinfo($attachment->file_link, PATHINFO_EXTENSION) == 'jpg') {
+            $post->image_count += 1;
+          }
+        }
       }
 
       $post->getComments->sortByDesc('created_at');
