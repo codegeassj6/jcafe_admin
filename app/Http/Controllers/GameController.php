@@ -15,6 +15,9 @@ class GameController extends Controller
   public function index()
   {
     $games = Game::orderBy('created_at', 'desc')->get();
+    foreach($games as $game) {
+        $game->image_url = Storage::disk('s3')->temporaryUrl('games/images/' . $game->image, now()->addMinutes(1));
+    }
 
     return $games;
   }
@@ -43,7 +46,7 @@ class GameController extends Controller
       return response()->json(['message' => $validator->messages()->get('*')], 500);
     }
 
-    Storage::disk('s3')->putFileAs('/games', $request->file('image'), $request->file('image')->hashName());
+    Storage::disk('s3')->putFileAs('/games/images', $request->file('image'), $request->file('image')->hashName());
 
     $game = Game::create([
       'name' => $request->input('name'),

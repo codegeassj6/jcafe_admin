@@ -26,9 +26,9 @@ class AuthController extends Controller
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
-        if(auth::user()->role != 'admin') {
+        if(auth::user()->role != 'admin' || auth::user()->role != 'moderator') {
           auth()->logout();
-          return response()->json(['message' => "You're not an Admin!"], 500);
+          return response()->json(['message' => "You're not an Admin!"], 401);
         }
 
         return $this->respondWithToken($token);

@@ -1,14 +1,12 @@
-b1
+Obj: loop images and files
+1st:
+seperate both files using eloquent query
 
-Resume:
-post
+2nd: use v-for and pregmatch
+
+
 
 
 Task:
-edit in games
-- test if role is not admin
-- validation in all Controller
-logout error
-- middleware api
-- laravel validator
-ww
+Post
+Chat

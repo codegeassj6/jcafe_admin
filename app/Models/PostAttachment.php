@@ -10,8 +10,9 @@ class PostAttachment extends Model
     use HasFactory;
 
     protected $fillable = [
-      'post_id',
-      'file_link'
+        'name',
+        'post_id',
+        'file_link'
     ];
 
     protected $table = 'post_attachments';
