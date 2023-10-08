@@ -89,6 +89,7 @@
                                 <div class="flex items-center">
                                     <input
                                         id="checkbox-all"
+                                        ref="checkbox_all"
                                         @change="selectAll"
                                         type="checkbox"
                                         class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
@@ -223,53 +224,66 @@
                             />
                         </div>
 
-                        <div
-                            class="flex items-center justify-center w-full mb-8"
-                        >
-                            <label
-                                for="dropzone-file"
-                                class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+                        <div class="flex flex-row gap-2 mb-8">
+                            <div
+                                class="flex items-center justify-center w-full"
                             >
-                                <div
-                                    class="flex flex-col items-center justify-center pt-5 pb-6"
+                                <label
+                                    for="dropzone-file"
+                                    class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
                                 >
-                                    <svg
-                                        class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
-                                        aria-hidden="true"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 20 16"
+                                    <div
+                                        class="flex flex-col items-center justify-center pt-5 pb-6"
                                     >
-                                        <path
-                                            stroke="currentColor"
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-                                        />
-                                    </svg>
-                                    <p
-                                        class="mb-2 text-sm text-gray-500 dark:text-gray-400"
-                                    >
-                                        <span class="font-semibold"
-                                            >Click to upload</span
+                                        <svg
+                                            class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
+                                            aria-hidden="true"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 20 16"
                                         >
-                                        or drag and drop
-                                    </p>
-                                    <p
-                                        class="text-xs text-gray-500 dark:text-gray-400"
-                                    >
-                                        SVG, PNG, JPG or GIF (MAX. 800x400px)
-                                    </p>
-                                </div>
-                                <input
-                                    id="dropzone-file"
-                                    @change="dropzoneAddGames"
-                                    type="file"
-                                    class="hidden"
-                                    accept="image/png, image/jpeg"
+                                            <path
+                                                stroke="currentColor"
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                                            />
+                                        </svg>
+                                        <p
+                                            class="mb-2 text-sm text-gray-500 dark:text-gray-400"
+                                        >
+                                            <span class="font-semibold"
+                                                >Click to upload</span
+                                            >
+                                        </p>
+                                        <p
+                                            class="text-xs text-gray-500 dark:text-gray-400"
+                                        >
+                                            PNG or JPG
+                                        </p>
+                                    </div>
+                                    <input
+                                        id="dropzone-file"
+                                        @change="dropzoneAddGames"
+                                        type="file"
+                                        class="hidden"
+                                        accept="image/png, image/jpeg"
+                                    />
+                                </label>
+                            </div>
+
+                            <div
+                                class="flex justify-center align-self-center text-center w-full p-3"
+                                v-if="form.addGames.temp_img"
+                            >
+                                <img
+                                    :src="form.addGames.temp_img"
+                                    alt=""
+                                    class="w-full h-64 border border-indigo-700 rounded"
                                 />
-                            </label>
+                            </div>
+
                         </div>
 
                         <div class="flex flex-row gap-4 justify-center">
@@ -284,7 +298,10 @@
                             <button
                                 type="button"
                                 class="inline-flex text-white bg-red-700 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg"
-                                @click="modal.addGames = false"
+                                @click="
+                                    (modal.addGames = false),
+                                        (form.addGames.temp_img = '')
+                                "
                             >
                                 Cancel
                             </button>
@@ -366,60 +383,49 @@
                         />
                     </div>
 
-                    <div class="flex items-center justify-center w-full mb-8" v-if="!form.editGames.data.image">
-                        <label
-                            for="edit_dropzone-file"
-                            class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+                    <div class="mb-4 p-4 bg-indigo-50">
+                        <div
+                            class="flex justify-center items-center opacity-50 mb-2"
                         >
-                            <div
-                                class="flex flex-col items-center justify-center pt-5 pb-6"
-                            >
-                                <svg
-                                    class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
-                                    aria-hidden="true"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 20 16"
-                                >
-                                    <path
-                                        stroke="currentColor"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-                                    />
-                                </svg>
-                                <p
-                                    class="mb-2 text-sm text-gray-500 dark:text-gray-400"
-                                >
-                                    <span class="font-semibold"
-                                        >Click to upload</span
-                                    >
-                                    or drag and drop
-                                </p>
-                                <p
-                                    class="text-xs text-gray-500 dark:text-gray-400"
-                                >
-                                    SVG, PNG, JPG or GIF (MAX. 800x400px)
-                                </p>
-                            </div>
-                            <input
-                                id="edit_dropzone-file"
-                                @change="dropzoneEditGames"
-                                type="file"
-                                class="hidden"
-                                accept="image/png, image/jpeg"
+                            <img
+                                :src="form.editGames.data.image_url"
+                                alt=""
+                                class="w-1/2 h-80 rounded-md"
+                                ref="game_image"
                             />
-                        </label>
-                    </div>
-
-                    <div v-else class="mb-4 relative p-4 bg-indigo-50">
-                        <div class="flex justify-center items-center opacity-50"><img :src="form.editGames.data.image_url" alt="" class="w-1/2 h-80 rounded-md"></div>
-                        <div class="absolute left-1/2 top-1/2">
-                            <i class="fa-regular fa-pen-to-square text-indigo-700 fa-2x"></i>
                         </div>
+
+                        <!-- <div class="absolute left-1/2 top-1/2">
+                            <a
+                                role="button"
+                                @click="this.$refs.change_image.click()"
+                                ><i
+                                    class="fa-regular fa-pen-to-square text-indigo-700 fa-2x"
+                                ></i
+                            ></a>
+                            <input
+                                type="file"
+                                ref="change_image"
+                                @change="updateGameImage"
+                                class="hidden"
+                            />
+                        </div> -->
                     </div>
 
+                    <div class="flex justify-center mb-4">
+                        <button
+                            @click="this.$refs.change_image.click()"
+                            class="inline-flex text-white bg-indigo-700 border-0 py-1 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg"
+                        >
+                            Change Image
+                        </button>
+                        <input
+                            type="file"
+                            ref="change_image"
+                            @change="editImage"
+                            class="hidden"
+                        />
+                    </div>
                 </DialogDescription>
 
                 <div class="flex flex-row gap-4 justify-center">
@@ -472,6 +478,7 @@ export default {
                     trailer_link: "",
                     image: "",
                     rating: "",
+                    temp_img: "",
                 },
 
                 editGames: {
@@ -509,18 +516,17 @@ export default {
         dropzoneAddGames(e) {
             this.form.addGames.image =
                 e.target.files[0] || e.dataTransfer.files[0];
+            this.form.addGames.temp_img = URL.createObjectURL(
+                this.form.addGames.image
+            );
         },
 
-        dropzoneEditGames(e) {
+        editImage(e) {
             this.form.editGames.image =
                 e.target.files[0] || e.dataTransfer.files[0];
-                if (this.form.editGames.image) {
-                    this.form.boolUpload = false;
-                    // this.previewImage(this.form.file);
-                    document.getElementById("myPhoto").src = URL.createObjectURL(
-                    this.form.file
-                    );
-                }
+            this.$refs.game_image.src = URL.createObjectURL(
+                this.form.editGames.image
+            );
         },
 
         addNewGame() {
@@ -540,14 +546,17 @@ export default {
                     },
                 })
                 .then((res) => {
-                    this.games.unshift(res.data);
-                    this.modal.addGames = false;
 
+                    this.games.unshift(res.data);
+                    // this.games = res.data;
+
+                    this.modal.addGames = false;
                     this.form.addGames.name = "";
                     this.form.addGames.image = "";
                     this.form.addGames.genre = "";
                     this.form.addGames.trailer_link = "";
                     this.form.addGames.rating = "";
+                    this.form.addGames.temp_img = "";
                 })
                 .catch((err) => {
                     console.log(err.response.data.message);
@@ -612,11 +621,18 @@ export default {
                 },
             })
                 .then((res) => {
-                    // temp
-                    this.games = res.data;
+                    // this.games = res.data;
+                    this.games.forEach((game, index) => {
+                        if(this.selected_games.includes(game.id)) {
+                            this.games.splice(index, 1);
+                        }
+                    });
+
+                    this.selected_games = [];
+                    this.$refs.checkbox_all.checked = false;
                 })
                 .catch((err) => {
-                    console.log(err.response);
+                    console.log(err);
                 });
         },
 
@@ -641,6 +657,12 @@ export default {
                     },
                 })
                 .then((res) => {
+                    this.games.map((game, index) => {
+                        if(game.id == this.form.editGames.data.id) {
+                            this.games[index] = res.data;
+                        }
+                    });
+
                     this.modal.editGames = false;
                     this.form.editGames.name = "";
                     this.form.editGames.image = "";
@@ -648,12 +670,7 @@ export default {
                     this.form.editGames.trailer_link = "";
                     this.form.editGames.rating = "";
 
-                    this.games.forEach((game, index) => {
-                        if (game.id == res.data.id) {
-                            this.games.splice(index, 1);
-                            this.games.push(res.data);
-                        }
-                    });
+
                 })
                 .catch((err) => {
                     console.log(err.response.data.message);

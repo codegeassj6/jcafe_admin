@@ -9,111 +9,116 @@ use Storage;
 
 class GameController extends Controller
 {
-  /**
-   * Display a listing of the resource.
-   */
-  public function index()
-  {
-    $games = Game::orderBy('created_at', 'desc')->get();
-    foreach($games as $game) {
-        $game->image_url = Storage::disk('s3')->temporaryUrl('games/images/' . $game->image, now()->addMinutes(1));
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        $games = Game::orderBy('created_at', 'desc')->get();
+        foreach ($games as $game) {
+            $game->image_url = Storage::disk('s3')->url('games/images/' . $game->image);
+        }
+
+        return $games;
     }
 
-    return $games;
-  }
+    public function search(Request $request)
+    {
+        $games = Game::where('name', 'LIKE', '%' . $request->input('query') . '%')->get();
 
-  public function search(Request $request)
-  {
-    $games = Game::where('name', 'LIKE', '%' . $request->input('query') . '%')->get();
-
-    return $games;
-  }
-
-  /**
-   * Store a newly created resource in storage.
-   */
-  public function store(Request $request)
-  {
-    $validator = Validator::make($request->all(), [
-      'name' => 'required|string|unique:games,name',
-      'genre' => 'string|required',
-      'trailer_link' => 'url|required',
-      'image' => 'file|mimes:png,jpg|required',
-      'rating' => 'integer|required|min:1|max:5'
-    ]);
-
-    if ($validator->fails()) {
-      return response()->json(['message' => $validator->messages()->get('*')], 500);
+        return $games;
     }
 
-    Storage::disk('s3')->putFileAs('/games/images', $request->file('image'), $request->file('image')->hashName());
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|unique:games,name',
+            'genre' => 'string|required',
+            'trailer_link' => 'url|required',
+            'image' => 'file|mimes:png,jpg|required',
+            'rating' => 'integer|required|min:1|max:5'
+        ]);
 
-    $game = Game::create([
-      'name' => $request->input('name'),
-      'genre' => $request->input('genre'),
-      'trailer_link' => $request->input('trailer_link'),
-      'image' => $request->file('image')->hashName(),
-      'rating' => 4
-    ]);
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->messages()->get('*')], 500);
+        }
 
-    return $game;
-  }
+        Storage::disk('s3')->putFileAs('/games/images', $request->file('image'), $request->file('image')->hashName(), 'public');
 
-  /**
-   * Display the specified resource.
-   */
-  public function show(Game $game)
-  {
-    //
-  }
+        $temp = Game::create([
+            'name' => $request->input('name'),
+            'genre' => $request->input('genre'),
+            'trailer_link' => $request->input('trailer_link'),
+            'image' => $request->file('image')->hashName(),
+            'rating' => 4
+        ]);
 
-  /**
-   * Update the specified resource in storage.
-   */
-  public function update(Request $request)
-  {
-    $temp_game_data = Game::whereId($request->input('id'))->firstOrFail();
-
-    $validator = Validator::make($request->all(), [
-      'name' => 'string|unique:games,name',
-      'genre' => 'string|nullable',
-      'trailer_link' => 'url|nullable',
-      'image' => 'mimes:png,jpg',
-      'rating' => 'integer|min:1|max:5|nullable'
-    ]);
-
-    if ($validator->fails()) {
-      return response()->json(['message' => $validator->messages()->get('*')], 500);
-    }
-    if($request->file('image')) {
-      Storage::disk('s3')->putFileAs('/games', $request->file('image'), $request->file('image')->hashName());
+        $game = Game::whereId($temp->id)->firstOrFail();
+        $game->image_url = Storage::disk('s3')->url('games/images/' . $game->image);
+        return $game;
     }
 
-    $game = Game::whereId($request->input('id'))->update([
-      'name' => $request->input('name') ? $request->input('name') : $temp_game_data->name,
-      'genre' => $request->input('genre') ? $request->input('genre') : $temp_game_data->genre,
-      'trailer_link' => $request->input('trailer_link') ? $request->input('trailer_link') : $temp_game_data->trailer_link,
-      'image' => $request->input('genre') ? $request->file('image')->hashName() : $temp_game_data->image,
-      'rating' => $request->input('rating') ? $request->input('rating') : $temp_game_data->rating,
-    ]);
-
-    $game_data = Game::whereId($request->input('id'))->first();
-
-    return $game_data;
-  }
-
-  /**
-   * Remove the specified resource from storage.
-   */
-  public function destroy(Request $request)
-  {
-    $games =  Game::whereIn('id', $request->input('id'))->get();
-
-    foreach($games as $game) {
-      Storage::disk('s3')->delete('games/'.$game->image);
-      $game->delete();
+    /**
+     * Display the specified resource.
+     */
+    public function show(Game $game)
+    {
+        //
     }
 
-    return $this->index();
-  }
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request)
+    {
+        $temp_game_data = Game::whereId($request->input('id'))->firstOrFail();
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'string|nullable|unique:games,name',
+            'genre' => 'string|nullable',
+            'trailer_link' => 'url|nullable',
+            'image' => 'mimes:png,jpg|nullable',
+            'rating' => 'integer|min:1|max:5|nullable'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->messages()->get('*')], 500);
+        }
+
+        if ($request->hasFile('image')) {
+            Storage::disk('s3')->delete('/games/images/' . $temp_game_data->image);
+            Storage::disk('s3')->putFileAs('/games/images', $request->file('image'), $request->file('image')->hashName(), 'public');
+        }
+
+        Game::whereId($request->input('id'))->update([
+            'name' => $request->input('name') ? $request->input('name') : $temp_game_data->name,
+            'genre' => $request->input('genre') ? $request->input('genre') : $temp_game_data->genre,
+            'trailer_link' => $request->input('trailer_link') ? $request->input('trailer_link') : $temp_game_data->trailer_link,
+            'image' => $request->hasFile('image') ? $request->file('image')->hashName() : $temp_game_data->image,
+            'rating' => $request->input('rating') ? $request->input('rating') : $temp_game_data->rating,
+        ]);
+
+        $game = Game::whereId($request->input('id'))->first();
+        $game->image_url = Storage::disk('s3')->url('games/images/' . $game->image);
+
+        return $game;
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Request $request)
+    {
+        $games = Game::whereIn('id', $request->input('id'))->get();
+
+        foreach ($games as $game) {
+            Storage::disk('s3')->delete('games/images/' . $game->image);
+            $game->delete();
+        }
+
+        return response()->json(['message' => 'ok'], 200);
+    }
 }

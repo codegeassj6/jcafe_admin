@@ -271,10 +271,10 @@
                     </div>
                 </div>
 
-                <div class="px-4" v-if="post.getComments">
+                <div class="px-4" v-if="post.get_comments">
                     <div
                         class="bg-indigo-50 py-4 px-12 flex flex-col gap-4 border"
-                        v-for="comment in post.getComments"
+                        v-for="comment in post.get_comments"
                         :key="comment.id"
                     >
                         <div class="flex flex-row gap-4">
@@ -284,11 +284,14 @@
                                 class="rounded-full w-12 h-12"
                             />
                             <div>
-                                <h4 class="text-lg text-indigo-700 font-bold">
-                                    Jhon Rey Repuela
-                                </h4>
+                                <div class="flex flex-row gap-2 items-center">
+                                    <h4 class="text-lg text-indigo-700 font-bold">
+                                        Jhon Rey Repuela
+                                    </h4>
+                                    <p class="text-gray-400"></p>
+                                </div>
                                 <p class="text-gray-400">
-                                    Friday, May 12, 2020
+                                    {{ comment.message }}
                                 </p>
                             </div>
                             <div class="ms-auto">
@@ -296,9 +299,6 @@
                             </div>
                         </div>
                         <div>
-                            {{ comment.message }}
-                        </div>
-                        <div class="">
                             <a role="button"
                                 ><i class="fa-regular fa-thumbs-up mr-2"></i
                                 ><span>4 likes</span></a
@@ -311,10 +311,12 @@
                     <div
                         class="relative w-full border border-indigo-400 rounded p-2 focus:outline-indigo-600"
                         contenteditable="true"
+                        :id="'comment_message_'+post.id"
                     ></div>
                     <div>
                         <button
                             class="inline-flex text-white bg-indigo-700 border-0 py-3 rounded px-6 focus:outline-none hover:bg-indigo-600 text-lg"
+                            @click="createComment(post.id)"
                         >
                             <i class="fa-solid fa-paper-plane"></i>
                         </button>
@@ -465,6 +467,29 @@ export default {
                     console.log(err.response.data.message);
                 });
         },
+
+        createComment(id) {
+
+            const AuthStr = "Bearer ".concat(userStore().user.access_token);
+            axios({
+                method: 'post',
+                params: {
+                    message: document.getElementById(`comment_message_${id}`).textContent,
+                },
+                url: `/api/posts/${id}/comment`,
+                headers: {Authorization: AuthStr}
+            }).then(res => {
+                this.posts.forEach((post, index) => {
+                if(post.id == id) {
+                    this.posts[index].get_comments = res.data;
+                }
+                document.getElementById(`comment_message_${id}`).textContent = '';
+            });
+            }).catch(err => {
+                console.log(err.response);
+            });
+        },
+
     },
 
     watch: {

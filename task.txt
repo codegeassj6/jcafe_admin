@@ -1,12 +1,5 @@
-Obj: loop images and files
-1st:
-seperate both files using eloquent query
-
-2nd: use v-for and pregmatch
-
-
-
-
 Task:
-Post
-Chat
+- Edit upload image
+- Change Uploaded image
+
+

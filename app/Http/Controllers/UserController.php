@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-use Auth;
-use Hash;
 use Validator;
 use Illuminate\Validation\Rule;
 
@@ -18,9 +16,18 @@ class UserController extends Controller
   {
     $user = User::orderBy('created_at', 'desc')->get();
 
-    if (Auth::user()->role != 'admin') {
-      return response()->json(['message' => 'Unauthorized'], 500);
-    }
+    return $user;
+  }
+
+  public function search(Request $request)
+  {
+    $user = User::where('first_name', 'LIKE', '%' . $request->input('query') . '%')
+      ->orWhere('last_name', 'LIKE', '%' . $request->input('query') . '%')
+      ->orWhere('id', 'LIKE', '%' . $request->input('query') . '%')
+      ->orWhere('address', 'LIKE', '%' . $request->input('query') . '%')
+      ->orWhere('email', 'LIKE', '%' . $request->input('query') . '%')
+      ->get();
+
     return $user;
   }
 
@@ -69,11 +76,29 @@ class UserController extends Controller
   public function update(Request $request, $id)
   {
     $user = User::whereId($id)->firstOrFail();
+
+
+    $validator = Validator::make($request->all(), [
+        'first_name' => 'string|nullable|min:2|max:20',
+        'last_name' => 'string|nullable|min:2|max:20',
+        'email' => 'email:rfc,dns|nullable',
+        'password' => 'nullable|sometimes|string',
+        'confirm_password' => 'same:password',
+        'address' => 'max:30|nullable',
+        'contact' => 'integer|nullable|',
+        'birthday' => 'date|nullable',
+      ]);
+
+      if ($validator->fails()) {
+        return response()->json(['message' => $validator->messages()->get('*')], 500);
+      }
+
+
     $user->update([
       'first_name' => $request->input('first_name'),
       'last_name' => $request->input('last_name'),
       'email' => $request->input('email'),
-      'password' => Hash::make($request->input('password')),
+      'password' => $request->input('password'),
       'address' => $request->input('address'),
       'contact' => $request->input('contact'),
       'birthday' => $request->input('birthday')
@@ -89,18 +114,8 @@ class UserController extends Controller
   {
     User::whereIn('id', $request->input('id'))->delete();
 
-    return $this->index();
+    return response()->json(['message' => 'ok'], 200);
   }
 
-  public function search(Request $request)
-  {
-    $user = User::where('first_name', 'LIKE', '%' . $request->input('query') . '%')
-      ->orWhere('last_name', 'LIKE', '%' . $request->input('query') . '%')
-      ->orWhere('id', 'LIKE', '%' . $request->input('query') . '%')
-      ->orWhere('address', 'LIKE', '%' . $request->input('query') . '%')
-      ->orWhere('email', 'LIKE', '%' . $request->input('query') . '%')
-      ->get();
 
-    return $user;
-  }
 }
