@@ -21,40 +21,45 @@ Route::group(['prefix' => 'auth'], function ($router) {
     Route::post('me', 'App\Http\Controllers\AuthController@me');
 });
 
-Route::group(['prefix' => 'dashboard'], function ($router) {
+Route::group(['prefix' => 'dashboard', 'middlware' => 'auth'], function ($router) {
     Route::get('/', 'App\Http\Controllers\DashboardController@index');
-})->middleware('auth.admin');
+});
 
-Route::group(['prefix' => 'users'], function ($router) {
+Route::group(['prefix' => 'users', 'middleware' => 'auth'], function ($router) {
     Route::get('/', 'App\Http\Controllers\UserController@index');
     Route::post('/', 'App\Http\Controllers\UserController@store');
     Route::delete('/', 'App\Http\Controllers\UserController@destroy');
     Route::get('/search', 'App\Http\Controllers\UserController@search');
     Route::patch('/{id}', 'App\Http\Controllers\UserController@update');
-})->middleware('auth.admin');
-
-
-Route::group(['prefix' => 'posts'], function ($router) {
-    Route::get('/', 'App\Http\Controllers\PostController@index');
-    Route::post('/', 'App\Http\Controllers\PostController@store');
-
-    // comment
-    Route::post('/{id}/comment', 'App\Http\Controllers\CommentController@store');
 });
 
-Route::group(['prefix' => 'games'], function ($router) {
+
+Route::group(['prefix' => 'posts', 'middleware' => 'auth'], function ($router) {
+    Route::get('/', 'App\Http\Controllers\PostController@index');
+    Route::post('/', 'App\Http\Controllers\PostController@store');
+    Route::patch('/', 'App\Http\Controllers\PostController@update');
+    Route::delete('/', 'App\Http\Controllers\PostController@destroy');
+    // post likes
+    Route::post('/{id}/like', 'App\Http\Controllers\PostLikeController@store');
+
+    // comment
+    Route::get('/{post_id}/comment', 'App\Http\Controllers\CommentController@index');
+    Route::post('/{post_id}/comment', 'App\Http\Controllers\CommentController@store');
+    Route::delete('/{post_id}/comment', 'App\Http\Controllers\CommentController@destroy');
+
+    // comment likes
+    Route::post('/{post_id}/comment/{comment_id}/like', 'App\Http\Controllers\CommentLikeController@store');
+});
+
+
+Route::group(['prefix' => 'games', 'middleware' => 'auth'], function ($router) {
     Route::get('/', 'App\Http\Controllers\GameController@index');
     Route::post('/', 'App\Http\Controllers\GameController@store');
     Route::post('/update', 'App\Http\Controllers\GameController@update');
     Route::get('/search', 'App\Http\Controllers\GameController@search');
     Route::delete('/', 'App\Http\Controllers\GameController@destroy');
-});
+})->middleware('auth');
 
 Route::group(['prefix' => 'orders'], function ($router) {
     Route::get('/', 'App\Http\Controllers\OrderController@index');
-});
-
-
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
+})->middleware('auth');

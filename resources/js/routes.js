@@ -58,18 +58,11 @@ const routes = [
 const router = VueRouter.createRouter({
     routes,
     history: VueRouter.createWebHashHistory(),
-    // history: true,
-
 });
 
 router.beforeEach((to, from, next) => {
     if (to.matched.some((record) => record.meta.requiresAuth)) {
         if (!userStore().user) {
-            console.log("not login");
-            // next({
-            //   name: "Home",
-            //   query: { redirect: to.fullPath },
-            // });
             next({ path: "/", query: { redirect: to.fullPath } });
             return false;
         }

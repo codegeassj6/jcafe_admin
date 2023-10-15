@@ -162,7 +162,7 @@
             v-if="edit_user"
             :open="modal.edit"
             @close="initEditModal"
-            class="z-50 bg-opacity-50 absolute bg-black w-full p-4 overflow-x-hidden overflow-y-auto inset-0 h-[calc(100%-1rem)] max-h-full"
+            class="z-50 bg-opacity-50 fixed bg-black w-full p-4 overflow-x-hidden overflow-y-auto inset-0 max-h-full"
         >
             <DialogPanel
                 class="relative w-full max-w-5xl max-h-full justify-center mx-auto mt-24"
@@ -315,7 +315,7 @@
         <Dialog
             :open="modal.add"
             @close="initAddModal"
-            class="z-50 bg-opacity-50 absolute bg-black w-full p-4 overflow-x-hidden overflow-y-auto inset-0 h-[calc(100%-1rem)] max-h-full"
+            class="z-50 bg-opacity-50 fixed bg-black w-full p-4 overflow-x-hidden overflow-y-auto inset-0 max-h-full"
         >
             <DialogPanel
                 class="relative w-full max-w-5xl max-h-full justify-center mx-auto mt-24"

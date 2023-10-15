@@ -108,14 +108,13 @@ export default {
         },
         url: `/api/auth/login`,
       })
-        .then((res) => {
+        .then((res) => {console.log(res.data);
           user_store.$patch((state) => {
             state.user = Object.assign({}, res.data.user, {
               access_token: res.data.access_token,
             });
           });
-          // this.user = user_store.authUser;
-          // axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.access_token}`
+
           this.$router.push("/dashboard");
         })
         .catch((err) => {

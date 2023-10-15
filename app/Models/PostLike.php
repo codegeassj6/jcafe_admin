@@ -4,19 +4,22 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\CommentLike;
 
-class Comment extends Model
+class PostLike extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-      'post_id',
       'user_id',
-      'message'
+      'post_id',
+      'reaction'
     ];
 
-    public function getLikes() {
-        return $this->hasMany(CommentLike::class, 'comment_id', 'id');
-    }
+    protected $table = 'post_likes';
+    protected $casts = [
+        'user_id' => 'integer',
+        'post_id' => 'integer',
+    ];
+
+
 }

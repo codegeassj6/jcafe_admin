@@ -10,7 +10,7 @@ use Illuminate\Validation\Rule;
 use Storage;
 use App\Models\PostAttachment;
 use Str;
-use DB;
+use App\Models\Comment;
 
 class PostController extends Controller
 {
@@ -24,6 +24,15 @@ class PostController extends Controller
             $post->getUserDetails;
             $post->getPostAttachmentImages;
             $post->getPostAttachmentFiles;
+            $post->getLikes;
+            $post->comment_counts = 0;
+
+            if ($post->getLikes) {
+                $post->authLikes = $post->getLikes->where('user_id', Auth::id())->first() ? 1 : 0;
+            } else {
+                $post->authLikes = 0;
+            }
+
 
             if ($post->getPostAttachmentImages) {
                 foreach ($post->getPostAttachmentImages as $image) {
@@ -37,7 +46,7 @@ class PostController extends Controller
                 }
             }
 
-            $post->getComments->sortByDesc('created_at');
+
         }
 
         return $posts;
@@ -58,7 +67,7 @@ class PostController extends Controller
         }
 
         $post = Post::create([
-            'message' => $request->input('message'),
+            'message' => Str::of($request->input('message'))->trim(),
             'user_id' => Auth::id(),
         ]);
 
@@ -76,7 +85,23 @@ class PostController extends Controller
 
         $post->getUserDetails;
         $post->getComments()->orderBy('created_at', 'desc');
-        return $this->index();
+        $post->getPostAttachmentImages;
+        $post->getPostAttachmentFiles;
+        $post->getLikes;
+        $post->comment_counts = 0;
+        if ($post->getPostAttachmentImages) {
+            foreach ($post->getPostAttachmentImages as $image) {
+                $image->image_url = Storage::disk('s3')->url('posts/files/' . $image->file_link);
+            }
+        }
+
+        if ($post->getPostAttachmentImages) {
+            foreach ($post->getPostAttachmentFiles as $file) {
+                $file->file_url = Storage::disk('s3')->url('posts/files/' . $file->file_link);
+            }
+        }
+
+        return $post;
     }
 
     /**
@@ -90,16 +115,45 @@ class PostController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Post $post)
+    public function update(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'id' => 'exists:posts,id',
+            'message' => 'required|string|max:500'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->messages()->get('*')], 500);
+        }
+
+        $post = Post::where(function ($query) use ($request) {
+            $query->where('id', $request->input('id'));
+            $query->where('user_id', Auth::id());
+        })->firstOrFail();
+        $post->message = Str::of($request->input('message'))->trim();
+        $post->save();
+
+        return $post;
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Post $post)
+    public function destroy(Request $request)
     {
-        //
+        $post = Post::where(function ($query) use ($request) {
+            $query->whereId($request->input('id'));
+            $query->where('user_id', Auth::id());
+        })->firstOrFail();
+
+        foreach ($post->getPostAttachments as $attachment) {
+            Storage::disk('s3')->delete('posts/files/' . $attachment->file_link);
+        }
+
+        $post->getComments()->delete();
+        $post->getLikes()->delete();
+        $post->delete();
+
+        return response()->json(['message' => 'deleted'], 200);
     }
 }

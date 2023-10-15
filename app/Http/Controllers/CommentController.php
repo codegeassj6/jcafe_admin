@@ -15,7 +15,15 @@ class CommentController extends Controller
      */
     public function index($id)
     {
-        $comments = Comment::where('post_id', $id)->get();
+        $comments = Comment::where('post_id', $id)->orderByDesc('created_at')->paginate(3);
+        foreach($comments as $comment) {
+            $comment->getLikes;
+            if ($comment->getLikes) {
+                $comment->authLikes = $comment->getLikes->where('user_id', Auth::id())->first() ? 1 : 0;
+            } else {
+                $comment->authLikes = 0;
+            }
+        }
 
         return $comments;
     }
@@ -25,9 +33,8 @@ class CommentController extends Controller
      */
     public function store(Request $request, $id)
     {
-       $post = Post::whereId($id)->firstOrFail();
-
         $validator = Validator::make($request->all(), [
+            'id' => 'exists:posts,id',
             'message' => 'string|required|max:200',
         ]);
 
@@ -35,13 +42,19 @@ class CommentController extends Controller
             return response()->json(['message' => $validator->messages()->get('*')], 500);
         }
 
-        Comment::create([
+        $comment = Comment::create([
             'post_id' => $id,
             'user_id' => Auth::id(),
             'message' => $request->input('message'),
         ]);
 
-        return $this->index($id);
+        if ($comment->getLikes) {
+            $comment->authLikes = $comment->getLikes->where('user_id', Auth::id())->first() ? 1 : 0;
+        } else {
+            $comment->authLikes = 0;
+        }
+
+        return $comment;
     }
 
     /**
@@ -63,8 +76,13 @@ class CommentController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Request $request, $post_id)
     {
-        //
+        $comment = Comment::whereId($request->input('comment_id'))->where('user_id', Auth::id())->firstOrFail();
+        foreach($comment->getLikes as $like) {
+            $like->delete();
+        }
+        $comment->delete();
+        return response()->json(['message' => 'deleted'], 200);
     }
 }

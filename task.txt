@@ -1,5 +1,4 @@
 Task:
-- Edit upload image
-- Change Uploaded image
-
+edit comments
+sort comments
 

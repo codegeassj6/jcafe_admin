@@ -1,347 +1,277 @@
 <template>
-  <div>
-    <div v-show="!display.includes(comment.post_id)" v-for="(comment, index) in comments.data" :key="index">
-      <div class="d-flex flex-row mb-2">
-        <img
-          :src="computedUserAvatar(comment)"
-          width="50"
-          height="50"
-          class="rounded-image"
-        />
-
-        <div class="d-flex">
-          <div class="d-flex flex-column ms-3">
-            <span class="name">{{
-              comment.user_details.first_name +
-              " " +
-              comment.user_details.last_name
-            }}</span>
-            <pre class="comment-text">{{ comment.message }}</pre>
-
-            <div class="d-flex flex-row align-items-center">
-              <a
-                role="button"
-                class="me-2"
-                :class="comment.authLikes ? 'text-primary' : 'text-secondary'"
-                @click="likeComment($event, comment)"
-              >
-                Like
-              </a>
-
-              <a role="button" class="me-2 text-secondary">Reply</a>
-              <small>{{ comment.created_time }}</small>
-            </div>
-          </div>
-        </div>
-
+    <div>
         <div
-          class="ms-auto"
-          v-if="comment.user_id == $store.getters.currentUser.id || $store.getters.currentUser.role == 1"
+            class="bg-indigo-50 py-4 px-12 flex flex-col gap-4 border"
+            v-for="comment in comments.data"
+            :key="comment.id"
         >
-          <div class="dropdown dropdown-menu-end">
-            <a
-              role="button"
-              class="p-2"
-              data-bs-toggle="dropdown"
-              aria-haspopup="true"
-              aria-expanded="false"
-            >
-              <i class="fa fa-ellipsis-h"></i>
-            </a>
-            <div class="dropdown-menu">
-              <a
-                class="dropdown-item"
-                role="button"
-                @click="initEditComment(comment, post_id)"
-                >Edit</a
-              >
-              <div class="dropdown-divider"></div>
-              <a
-                class="dropdown-item"
-                role="button"
-                @click="deleteComment(comment)"
-                >Delete</a
-              >
+            <div class="flex flex-row gap-4">
+                <img
+                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                    alt=""
+                    class="rounded-full w-12 h-12"
+                />
+                <div>
+                    <div class="flex flex-row gap-2 items-center">
+                        <h4 class="text-lg text-indigo-700 font-bold">
+                            Jhon Rey Repuela
+                        </h4>
+                        <p class="text-gray-400"></p>
+                    </div>
+                    <p class="text-gray-400">
+                        {{ comment.message }}
+                    </p>
+                </div>
+                <div class="ms-auto">
+                    <Popover class="relative">
+                        <PopoverButton
+                            class="w-8 h-8 hover:bg-indigo-50 hover:rounded-full"
+                            ><i class="fa-solid fa-ellipsis-vertical"></i
+                        ></PopoverButton>
+
+                        <PopoverPanel
+                            class="absolute right-0 z-10 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                        >
+                            <div class="flex flex-col gap-1">
+                                <div class="w-full">
+                                    <a
+                                        role="button"
+                                        class="hover:bg-indigo-50 block px-2 py-1"
+                                        >Edit</a
+                                    >
+                                </div>
+                                <div class="w-full">
+                                    <a
+                                        role="button"
+                                        class="hover:bg-indigo-50 block px-2 py-1"
+                                        @click="deleteComment(comment)"
+                                        >Delete</a
+                                    >
+                                </div>
+                            </div>
+                        </PopoverPanel>
+                    </Popover>
+                </div>
             </div>
-          </div>
+            <div class="text-indigo-700">
+                <a role="button" @click="storeLike(comment)"
+                    ><i
+                        class="fa-thumbs-up mr-1"
+                        :class="comment.authLikes ? 'fa-solid' : 'fa-regular'"
+                    ></i
+                ></a>
+                <span class="mr-1">{{ comment.get_likes.length }}</span>
+                <span v-if="comment.get_likes.length < 2">like</span>
+                <span v-else>likes</span>
+            </div>
         </div>
-      </div>
-    </div>
 
-    <div class="flex mb-2" v-if="comments.length || comments.last_page != comment.currentPage">
-      <a role="button" class="text-primary" @click="loadMoreComment">Load more comments</a>
-    </div>
+        <div class="text-indigo-700 mt-2 mx-4">
+            <a
+                role="button"
+                v-if="comments.next_page_url"
+                @click="commentNextPage(comments)"
+                >show more...</a
+            >
+        </div>
 
-    <div class="card-footer border-0 px-3 py-3 bg-comment">
-      <div class="d-flex flex-start w-100">
-        <img
-          class="rounded-circle shadow-1-strong me-3"
-          :src="profileImage"
-          alt="avatar"
-          width="40"
-          height="40"
-        />
-        <div class="form-outline w-100">
-          <div class="d-flex flex-wrap border-post">
+        <div class="flex flex-row mx-4 my-4 gap-4 items-end">
             <div
-              class="p-2 flex-fill bg-white"
-              contenteditable="true"
-              :id="`content_${post_id}`"
+                class="relative w-full border border-indigo-400 rounded p-2 focus:outline-indigo-600"
+                contenteditable="true"
+                :id="'comment_message_' + post.id"
             ></div>
-          </div>
+            <div>
+                <button
+                    class="inline-flex text-white bg-indigo-700 border-0 py-3 rounded px-6 focus:outline-none hover:bg-indigo-600 text-lg"
+                    @click="storeComment(post.id)"
+                >
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </div>
         </div>
-      </div>
-
-      <div class="float-end mb-3 mt-4">
-        <button
-          v-if="!edit.comment"
-          type="button"
-          @click="postComment(post_id)"
-          class="btn btn-primary btn-sm bg-gradient"
-        >
-          Post comment
-        </button>
-
-        <button
-          v-if="edit.comment"
-          type="button"
-          @click="editComment(post_id)"
-          class="btn btn-primary btn-sm"
-        >
-          Edit comment
-        </button>
-        <button
-          v-if="edit.comment"
-          @click="cancelEditComment(post_id)"
-          type="button"
-          class="btn btn-danger btn-sm"
-        >
-          Cancel
-        </button>
-      </div>
     </div>
-  </div>
 </template>
 <script>
-//import name from './
+import { userStore } from "../stores/userStore";
+import { Popover, PopoverButton, PopoverPanel } from "@headlessui/vue";
 
 export default {
-  data() {
-    return {
-      comments: "",
-      edit: {
-        comment: "",
-      },
-      comment: {
-        currentPage: 1,
-        timeout: 0,
-        collection: [],
-      }
-
-    };
-  },
-  components: {},
-
-  props: {
-    post_id: {
-      type: Number,
-    },
-    sort: {
-      type: String,
-    },
-    sort_id: {
-      type: Number,
-    },
-    display: {
-      type: Array,
-    }
-  },
-
-  computed: {
-    profileImage() {
-      return this.$store.getters.currentUser.profile_img
-        ? "/storage/user/" +
-            this.$store.getters.currentUser.id +
-            "/img/" +
-            this.$store.getters.currentUser.profile_img
-        : "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
-    },
-  },
-
-  methods: {
-    computedUserAvatar(data) {
-      if(data.user_details.profile_img) {
-        return '/storage/user/' + data.user_details.id + '/img/' + data.user_details.profile_img;
-      } else {
-        return 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y';
-      }
-    },
-
-    postComment(post_id) {
-      const AuthStr = "Bearer ".concat(this.$store.getters.currentUser.token);
-      axios({
-        method: "post",
-        params: {
-          post_id: this.post_id,
-          comment: document.getElementById(`content_${post_id}`).innerText,
-        },
-        url: `/api/comment`,
-        headers: { Authorization: AuthStr },
-      })
-        .then((res) => {
-          document.getElementById(`content_${post_id}`).innerText = "";
-          this.comments.data.unshift(res.data);
-          // this.comments = res.data;
-        })
-        .catch((err) => {});
-    },
-
-    likeComment(e, data) {
-      const AuthStr = "Bearer ".concat(this.$store.getters.currentUser.token);
-      axios({
-        method: "post",
-        params: { id: data.id },
-        url: `/api/comment/like`,
-        headers: { Authorization: AuthStr },
-      })
-        .then((res) => {
-          if (e.target.classList.contains("text-secondary")) {
-            e.target.classList.remove("text-secondary");
-            e.target.classList.add("text-primary");
-          } else {
-            e.target.classList.remove("text-primary");
-            e.target.classList.add("text-secondary");
-          }
-        })
-        .catch((err) => {});
-    },
-
-    deleteComment(comment) {
-      const AuthStr = "Bearer ".concat(this.$store.getters.currentUser.token);
-      axios({
-        method: "delete",
-        url: `/api/comment/${comment.id}`,
-        headers: { Authorization: AuthStr },
-      })
-        .then((res) => {
-          this.comments.data.forEach((elem, index) => {
-            if (elem.id == comment.id) {
-              this.comments.data.splice(index, 1);
+    data() {
+        return {
+            comments: "",
+            collection: {
+                comments_id: [],
             }
-            this.comment.currentPage = 0;
-          });
-        })
-        .catch((err) => {});
+        };
+    },
+    components: {
+        Popover,
+        PopoverButton,
+        PopoverPanel,
     },
 
-    editComment(post_id) {
-      const AuthStr = "Bearer ".concat(this.$store.getters.currentUser.token);
-      axios({
-        method: "patch",
-        params: {
-          message: document.getElementById(`content_${post_id}`).innerText,
+    props: {
+        post: {
+            type: Object,
         },
-        url: `/api/comment/${this.edit.comment.id}`,
-        headers: { Authorization: AuthStr },
-      })
-        .then((res) => {
-          this.comments.data.forEach((elem, index) => {
-            if (elem == this.edit.comment) {
-              this.comments.data[index].message = document.getElementById(
-                `content_${post_id}`
-              ).innerText;
+    },
+
+    computed: {
+        commentIds() {
+
+        },
+    },
+
+    methods: {
+        deleteComment(comment) {
+            const AuthStr = 'Bearer '.concat(userStore().user.access_token);
+            axios({
+                method: 'delete',
+                params: {comment_id: comment.id},
+                url: `/api/posts/${comment.post_id}/comment`,
+                headers: {Authorization: AuthStr}
+            }).then(res => {
+                this.collection.comments_id.forEach((id, index) => {
+                   if(id == comment.id) {
+                       this.collection.comments_id.splice(index, 1);
+                   }
+                });
+                this.comments.data.forEach((data, index) => {
+                    if(data.id == comment.id) {
+                        this.comments.data.splice(index, 1);
+                    }
+                });
+                this.post.comment_counts--;
+            }).catch(err => {
+                console.log(err.response.data.message);
+            });
+        },
+
+        storeLike(comment) {
+            const AuthStr = "Bearer ".concat(userStore().user.access_token);
+            axios({
+                method: "post",
+                url: `/api/posts/${comment.post_id}/comment/${comment.id}/like`,
+                headers: { Authorization: AuthStr },
+            })
+                .then((res) => {
+                    if (res.data.message == "like") {
+                        comment.get_likes.unshift(res.data.data);
+                        comment.authLikes = 1;
+                    } else {
+                        comment.authLikes = 0;
+                        comment.get_likes.forEach((like, index) => {
+                            if (like.user_id == comment.user_id) {
+                                comment.get_likes.splice(index, 1);
+                            }
+                        });
+                    }
+                })
+                .catch((err) => {
+                    console.log(err.response);
+                });
+        },
+
+        commentNextPage(comments) {
+            if (comments.next_page_url) {
+                const AuthStr = "Bearer ".concat(userStore().user.access_token);
+                axios({
+                    method: "get",
+                    params: { id: 1 },
+                    url: `${comments.next_page_url}`,
+                    headers: { Authorization: AuthStr },
+                })
+                    .then((res) => {
+                        this.comments.current_page = res.data.current_page;
+                        this.comments.next_page_url = res.data.next_page_url;
+                        res.data.data.forEach((data) => {
+                            if(!this.collection.comments_id.includes(data.id)) {
+                                this.comments.data.push(data);
+                                this.collection.comments_id.push(data.id);
+                            }
+                        });
+                    })
+                    .catch((err) => {
+                        console.log(err.response.data.message);
+                    });
             }
-          });
-          this.edit.comment = "";
-          document.getElementById(`content_${post_id}`).innerText = "";
-        })
-        .catch((err) => {});
-    },
-
-    initEditComment(comment, post_id) {
-      this.edit.comment = comment;
-      comment.edit_mode = 1;
-      document.getElementById(`content_${post_id}`).innerText = comment.message;
-    },
-
-    cancelEditComment(post_id) {
-      document.getElementById(`content_${post_id}`).innerText = "";
-      this.edit.comment = "";
-    },
-
-    getComments() {
-      const AuthStr = "Bearer ".concat(this.$store.getters.currentUser.token);
-      axios({
-        method: "get",
-        params: {
-          post_id: this.post_id,
-          sort: this.sort,
         },
-        url: `/api/comment?page=${this.comment.currentPage}`,
-        headers: { Authorization: AuthStr },
-      })
-        .then((res) => {
-          if(this.comment.currentPage == 1) {
-            this.comments = res.data;
-            res.data.data.forEach(data => {
-              this.comment.collection.push(data.id);
-            })
-          } else {
-            res.data.data.forEach(data => {
-              if(!this.comment.collection.includes(data.id)) {
-                this.comments.data.push(data);
-                this.comment.collection.push(data.id);
-              }
-            })
-          }
 
-        })
-        .catch((err) => {});
+        getComments() {
+            const AuthStr = "Bearer ".concat(userStore().user.access_token);
+            axios({
+                method: "get",
+                url: `/api/posts/${this.post.id}/comment`,
+                headers: { Authorization: AuthStr },
+            })
+                .then((res) => {
+                    this.comments = res.data;
+                    this.comments.data.forEach((comment) => {
+                        if(!this.collection.comments_id.includes(comment.id)) {
+                            this.collection.comments_id.push(comment.id);
+                        }
+                    });
+                    this.post.comment_counts = this.comments.total;
+                })
+                .catch((err) => {
+                    console.log(err.response.data.message);
+                });
+        },
+
+        storeComment(id) {
+            const AuthStr = "Bearer ".concat(userStore().user.access_token);
+            axios({
+                method: "post",
+                params: {
+                    message: document.getElementById(`comment_message_${id}`)
+                        .textContent,
+                },
+                url: `/api/posts/${id}/comment`,
+                headers: { Authorization: AuthStr },
+            })
+                .then((res) => {
+                    this.comments.data.unshift(res.data);
+                    this.collection.comments_id.push(res.data.id);
+                    this.post.comment_counts++;
+                    document.getElementById(
+                        `comment_message_${id}`
+                    ).textContent = "";
+                })
+                .catch((err) => {
+                    console.log(err.response);
+                });
+        },
     },
 
-    loadMoreComment() {
-      if(this.comments.last_page != this.comment.currentPage) {
-        this.comment.currentPage++;
+    watch: {
+        $data: {
+            handler: function (val, oldVal) {
+                console.log("watcher: ", val);
+            },
+            deep: true,
+        },
+
+        $props: {
+            handler: function (val, oldVal) {
+                console.log("watcher: ", val);
+            },
+            deep: true,
+        },
+        some_prop: function () {
+            //do something if some_prop updated
+        },
+    },
+
+    updated() {},
+
+    beforeMounted() {},
+
+    mounted() {
         this.getComments();
-      }
-
     },
-  },
-
-  watch: {
-      // $data: {
-      //     handler: function(val, oldVal) {
-      //         console.log('comment:', val);
-      //     },
-      //     deep: true
-      // },
-
-      $props: {
-          handler: function(val, oldVal) {
-              this.getComments();
-          },
-          deep: true
-      },
-  },
-
-  // watch: {
-  //
-  // },
-
-  updated() {
-
-  },
-
-  mounted() {
-    this.getComments();
-  },
 };
 </script>
 
 <style scoped>
-.bg-comment {
-  background: #f1f1f1;
-}
 </style>
-
-

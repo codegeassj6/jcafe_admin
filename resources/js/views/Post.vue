@@ -137,7 +137,35 @@
                         <p class="text-gray-400">Friday, May 12, 2020</p>
                     </div>
                     <div class="ms-auto">
-                        <i class="fa-solid fa-ellipsis-vertical"></i>
+                        <Popover class="relative">
+                            <PopoverButton
+                                class="w-8 h-8 hover:bg-indigo-50 hover:rounded-full"
+                                ><i class="fa-solid fa-ellipsis-vertical"></i
+                            ></PopoverButton>
+
+                            <PopoverPanel
+                                class="absolute right-0 z-10 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                            >
+                                <div class="flex flex-col gap-1 p-2">
+                                    <a
+                                        role="button"
+                                        @click="
+                                            (modal.post.edit.state = true),
+                                                (modal.post.edit.data = post)
+                                        "
+                                        class="hover:bg-indigo-50"
+                                        >Edit</a
+                                    >
+                                    <span><hr /></span>
+                                    <a
+                                        role="button"
+                                        @click="deletePost(post)"
+                                        class="hover:bg-indigo-50"
+                                        >Delete</a
+                                    >
+                                </div>
+                            </PopoverPanel>
+                        </Popover>
                     </div>
                 </div>
 
@@ -215,7 +243,12 @@
                         class="grid grid-cols-2 mb-4 rounded bg-indigo-50"
                         v-if="post.get_post_attachment_images.length >= 5"
                     >
-                        <div v-for="(attachment, index) in post.get_post_attachment_images" :key="attachment.id">
+                        <div
+                            v-for="(
+                                attachment, index
+                            ) in post.get_post_attachment_images"
+                            :key="attachment.id"
+                        >
                             <div>
                                 <img
                                     :src="attachment.image_url"
@@ -256,11 +289,28 @@
                 </div>
 
                 <div class="flex flex-row px-4 gap-4 mb-4">
-                    <div class="text-indigo-700">
-                        <i class="fa-solid fa-thumbs-up mr-2"></i>3 likes
+                    <div class="text-indigo-700 flex flex-row gap-1">
+                        <a role="button" @click="storeLike(post)">
+                            <i
+                                :class="
+                                    post.authLikes ? 'fa-solid' : 'fa-regular'
+                                "
+                                class="fa-thumbs-up"
+                            ></i
+                        ></a>
+                        <span v-if="post.get_likes">{{
+                            post.get_likes.length
+                        }}</span>
+                        <span v-if="post.get_likes.length < 2">Like</span>
+                        <span v-else>Likes</span>
                     </div>
-                    <div class="text-indigo-700">
-                        <i class="fa-regular fa-comments"></i> comments
+                    <div class="text-indigo-700 flex flex-row gap-1">
+                        <span><i class="fa-regular fa-comments"></i></span>
+                        <span>{{
+                            post.comment_counts
+                        }}</span>
+                        <span v-if="post.comment_counts < 2">comment</span>
+                        <span v-else>Comments</span>
                     </div>
                     <div class="ms-auto">
                         <button
@@ -271,65 +321,64 @@
                     </div>
                 </div>
 
-                <div class="px-4" v-if="post.get_comments">
-                    <div
-                        class="bg-indigo-50 py-4 px-12 flex flex-col gap-4 border"
-                        v-for="comment in post.get_comments"
-                        :key="comment.id"
-                    >
-                        <div class="flex flex-row gap-4">
-                            <img
-                                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                                alt=""
-                                class="rounded-full w-12 h-12"
-                            />
-                            <div>
-                                <div class="flex flex-row gap-2 items-center">
-                                    <h4 class="text-lg text-indigo-700 font-bold">
-                                        Jhon Rey Repuela
-                                    </h4>
-                                    <p class="text-gray-400"></p>
-                                </div>
-                                <p class="text-gray-400">
-                                    {{ comment.message }}
-                                </p>
-                            </div>
-                            <div class="ms-auto">
-                                <i class="fa-solid fa-ellipsis-vertical"></i>
-                            </div>
-                        </div>
-                        <div>
-                            <a role="button"
-                                ><i class="fa-regular fa-thumbs-up mr-2"></i
-                                ><span>4 likes</span></a
-                            >
-                        </div>
-                    </div>
-                </div>
+                <Comment :post="post" />
+            </div>
+        </div>
 
-                <div class="flex flex-row mx-4 my-4 gap-4 items-end">
-                    <div
-                        class="relative w-full border border-indigo-400 rounded p-2 focus:outline-indigo-600"
-                        contenteditable="true"
-                        :id="'comment_message_'+post.id"
-                    ></div>
-                    <div>
-                        <button
-                            class="inline-flex text-white bg-indigo-700 border-0 py-3 rounded px-6 focus:outline-none hover:bg-indigo-600 text-lg"
-                            @click="createComment(post.id)"
+        <Dialog
+            :open="modal.post.edit.state"
+            @close="modal.post.edit.state = false"
+            class="z-50 bg-opacity-50 fixed bg-black w-full overflow-x-hidden overflow-y-auto inset-0 max-h-full"
+        >
+            <DialogPanel
+                class="relative w-full max-w-5xl max-h-full justify-center mx-auto mt-24"
+            >
+                <div class="relative bg-white rounded-lg shadow p-8">
+                    <DialogTitle class="text-xl font-bold mb-4 border-b"
+                        >Edit Post</DialogTitle
+                    >
+                    <DialogDescription class="border-b mb-4">
+                        <div
+                            contenteditable="true"
+                            class="focus:outline-none px-2 mb-4"
+                            ref="edit_post_message"
                         >
-                            <i class="fa-solid fa-paper-plane"></i>
+                            {{ modal.post.edit.data.message }}
+                        </div>
+                    </DialogDescription>
+
+                    <div class="flex flex-row-reverse gap-2">
+                        <button
+                            @click="updatePost"
+                            class="inline-flex text-white bg-indigo-700 border-0 py-1 px-4 focus:outline-none hover:bg-indigo-500 rounded text-lg"
+                        >
+                            Update
+                        </button>
+                        <button
+                            @click="modal.post.edit.state = false"
+                            class="inline-flex text-white bg-red-700 border-0 py-1 px-4 focus:outline-none hover:bg-red-500 rounded text-lg"
+                        >
+                            Close
                         </button>
                     </div>
                 </div>
-            </div>
-        </div>
+            </DialogPanel>
+        </Dialog>
     </div>
 </template>
 <script>
 import Aside from "../components/Aside.vue";
 import { userStore } from "../stores/userStore";
 import Comment from "../components/Comment.vue";
+import {
+    Popover,
+    PopoverButton,
+    PopoverPanel,
+    Dialog,
+    DialogPanel,
+    DialogTitle,
+    DialogDescription,
+} from "@headlessui/vue";
 
 export default {
     data() {
@@ -350,11 +399,30 @@ export default {
                     formData: "",
                 },
             },
+
+            modal: {
+                post: {
+                    edit: {
+                        state: false,
+                        data: "",
+                        form: {
+                            message: "",
+                        },
+                    },
+                },
+            },
         };
     },
     components: {
         Aside,
         Comment,
+        Popover,
+        PopoverButton,
+        PopoverPanel,
+        Dialog,
+        DialogPanel,
+        DialogTitle,
+        DialogDescription,
     },
 
     props: {},
@@ -362,6 +430,86 @@ export default {
     computed: {},
 
     methods: {
+        deletePost(post) {
+            const AuthStr = "Bearer ".concat(userStore().user.access_token);
+            axios({
+                method: "delete",
+                params: {
+                    id: post.id,
+                },
+                url: `/api/posts`,
+                headers: { Authorization: AuthStr },
+            })
+                .then((res) => {
+                    this.posts.forEach((post_each, index) => {
+                        if(post_each.id == post.id) {
+                            this.posts.splice(index, 1);
+                        }
+                    })
+                })
+                .catch((err) => {
+                    console.log(err.response);
+                });
+        },
+
+        updatePost() {
+            const AuthStr = "Bearer ".concat(userStore().user.access_token);
+            axios({
+                method: "patch",
+                params: {
+                    id: this.modal.post.edit.data.id,
+                    message: this.$refs.edit_post_message.textContent,
+                },
+                url: `/api/posts`,
+                headers: { Authorization: AuthStr },
+            })
+                .then((res) => {
+                    this.posts.forEach((post, index) => {
+                        if (post.id == this.modal.post.edit.data.id) {
+                            this.posts[index].message = res.data.message;
+                        }
+                    });
+                    this.modal.post.edit.state = false;
+                })
+                .catch((err) => {
+                    console.log(err.response);
+                });
+        },
+
+        storeLike(post) {
+            const AuthStr = "Bearer ".concat(userStore().user.access_token);
+            axios({
+                method: "post",
+                url: `/api/posts/${post.id}/like`,
+                headers: { Authorization: AuthStr },
+            })
+                .then((res) => {
+                    if (res.data.message == "like") {
+                        post.authLikes = 1;
+                        post.get_likes.unshift(res.data.data);
+                    } else {
+                        post.authLikes = 0;
+                        this.posts.forEach((post_data, post_index) => {
+                            if (post_data.id == post.id) {
+                                post_data.get_likes.forEach(
+                                    (post_like, post_like_index) => {
+                                        if (post_like.user_id == post.user_id) {
+                                            post_data.get_likes.splice(
+                                                post_like_index,
+                                                1
+                                            );
+                                        }
+                                    }
+                                );
+                            }
+                        });
+                    }
+                })
+                .catch((err) => {
+                    console.log(err.response.data.message);
+                });
+        },
+
         initAttachFile() {
             this.$refs.attachFiles.click();
         },
@@ -458,7 +606,7 @@ export default {
                 headers: { Authorization: AuthStr },
             })
                 .then((res) => {
-                    this.posts = res.data;
+                    this.posts.unshift(res.data);
                     this.form.post.message = "";
                     this.form.post.attachments.files.name = [];
                     this.form.post.attachments.images.temp_link = [];
@@ -467,29 +615,6 @@ export default {
                     console.log(err.response.data.message);
                 });
         },
-
-        createComment(id) {
-
-            const AuthStr = "Bearer ".concat(userStore().user.access_token);
-            axios({
-                method: 'post',
-                params: {
-                    message: document.getElementById(`comment_message_${id}`).textContent,
-                },
-                url: `/api/posts/${id}/comment`,
-                headers: {Authorization: AuthStr}
-            }).then(res => {
-                this.posts.forEach((post, index) => {
-                if(post.id == id) {
-                    this.posts[index].get_comments = res.data;
-                }
-                document.getElementById(`comment_message_${id}`).textContent = '';
-            });
-            }).catch(err => {
-                console.log(err.response);
-            });
-        },
-
     },
 
     watch: {
