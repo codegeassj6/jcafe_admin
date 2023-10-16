@@ -45,6 +45,7 @@ Route::group(['prefix' => 'posts', 'middleware' => 'auth'], function ($router) {
     // comment
     Route::get('/{post_id}/comment', 'App\Http\Controllers\CommentController@index');
     Route::post('/{post_id}/comment', 'App\Http\Controllers\CommentController@store');
+    Route::patch('/{post_id}/comment', 'App\Http\Controllers\CommentController@update');
     Route::delete('/{post_id}/comment', 'App\Http\Controllers\CommentController@destroy');
 
     // comment likes

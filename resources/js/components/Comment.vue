@@ -37,6 +37,7 @@
                                     <a
                                         role="button"
                                         class="hover:bg-indigo-50 block px-2 py-1"
+                                        @click="editComment(comment)"
                                         >Edit</a
                                     >
                                 </div>
@@ -124,6 +125,28 @@ export default {
     },
 
     methods: {
+
+
+        editComment(comment) {
+            var input = document.getElementById(`comment_message_${comment.post_id}`);
+            console.log(`comment_message_${comment.post_id}`);
+            input.innerHTML = comment.message;
+        },
+
+        updateComment(comment) {
+            const AuthStr = 'Bearer '.concat(userStore().user.access_token);
+            axios({
+                method: 'patch',
+                params: {comment_id: comment.id},
+                url: `/api/posts/${comment.post_id}/comment`,
+                headers: {Authorization: AuthStr}
+            }).then(res => {
+                console.log(res.data);
+            }).catch(err => {
+
+            });
+        },
+
         deleteComment(comment) {
             const AuthStr = 'Bearer '.concat(userStore().user.access_token);
             axios({
