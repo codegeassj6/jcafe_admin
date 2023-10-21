@@ -6,54 +6,39 @@
             <div
                 class="relative overflow-x-auto shadow-md sm:rounded-lg p-4 border"
             >
-                <div
-                    class="flex items-center justify-between pb-4 bg-white dark:bg-gray-900"
-                >
-                    <Popover class="relative">
-                        <PopoverButton
+                <div class="flex items-center justify-between pb-4 bg-white">
+                    <Menu>
+                        <MenuButton
                             class="text-white bg-indigo-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center"
-                            >Actions
-                            <svg
-                                class="w-4 h-4 ml-2"
-                                aria-hidden="true"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M19 9l-7 7-7-7"
-                                ></path>
-                            </svg>
-                        </PopoverButton>
-                        <PopoverPanel
-                            class="z-10 bg-white absolute mt-2 divide-y divide-gray-100 shadow w-56"
+                            >Action</MenuButton
                         >
-                            <div class="py-2 text-sm text-gray-700">
+                        <MenuItems class="z-10 bg-white absolute mt-32 divide-y divide-gray-100 shadow w-56">
+                            <MenuItem class="py-2 text-sm text-gray-700">
                                 <a
+                                    class="block px-4 py-2 cursor-pointer hover:bg-indigo-50"
                                     role="button"
-                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
                                     @click="modal.add = true"
-                                    >Add User</a
                                 >
+                                    Add User
+                                </a>
+                            </MenuItem>
+                            <MenuItem>
                                 <a
                                     role="button"
-                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
-                                    @click="deleteUser()"
+                                    class="block px-4 py-2 cursor-pointer hover:bg-indigo-50"
+                                    @click="deleteUser"
                                     >Delete User</a
                                 >
-                            </div>
-                        </PopoverPanel>
-                    </Popover>
+                            </MenuItem>
+                        </MenuItems>
+                    </Menu>
+
                     <div class="relative">
                         <div
                             class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
                         >
                             <svg
-                                class="w-5 h-5 text-gray-500 dark:text-gray-400"
+                                class="w-5 h-5 text-gray-500"
                                 aria-hidden="true"
                                 fill="currentColor"
                                 viewBox="0 0 20 20"
@@ -68,19 +53,15 @@
                         </div>
                         <input
                             type="text"
-                            class="block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            class="block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
                             placeholder="Search for users"
                             @keyup="searchUser"
                             ref="search"
                         />
                     </div>
                 </div>
-                <table
-                    class="w-full text-sm text-left text-gray-500 dark:text-gray-400"
-                >
-                    <thead
-                        class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
-                    >
+                <table class="w-full text-sm text-left text-gray-500">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                         <tr>
                             <th scope="col" class="p-4">
                                 <div class="flex items-center">
@@ -89,7 +70,7 @@
                                         @change="selectAll"
                                         id="checkbox_id"
                                         type="checkbox"
-                                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
                                     />
                                     <label for="checkbox_id" class="sr-only"
                                         >checkbox</label
@@ -105,7 +86,7 @@
                     </thead>
                     <tbody>
                         <tr
-                            class="bg-white border-b items-center dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                            class="bg-white border-b items-center"
                             v-for="user in users"
                             :key="user.id"
                         >
@@ -116,7 +97,7 @@
                                         type="checkbox"
                                         v-model="selected_users"
                                         :value="user.id"
-                                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
                                     />
                                     <label :for="user.id" class="sr-only"
                                         >checkbox</label
@@ -147,7 +128,7 @@
                             <td class="px-6 py-4">
                                 <a
                                     role="button"
-                                    class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                                    class="font-medium text-blue-600"
                                     @click="initEditModal(true, user)"
                                     >Edit
                                 </a>
@@ -445,12 +426,12 @@
                             <div class="relative mb-4 w-full">
                                 <label
                                     for="role"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                                    class="block mb-2 text-sm font-medium text-gray-900"
                                     >Role</label
                                 >
                                 <select
                                     id="role"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                                     v-model="form.addUser.role"
                                 >
                                     <option value="" selected>
@@ -484,7 +465,6 @@
     </div>
 </template>
 <script>
-import { Popover, PopoverButton, PopoverPanel } from "@headlessui/vue";
 import Aside from "../components/Aside.vue";
 import { userStore } from "../stores/userStore";
 
@@ -493,6 +473,10 @@ import {
     DialogPanel,
     DialogTitle,
     DialogDescription,
+    Menu,
+    MenuButton,
+    MenuItems,
+    MenuItem,
 } from "@headlessui/vue";
 
 export default {
@@ -521,14 +505,15 @@ export default {
         };
     },
     components: {
-        Popover,
-        PopoverButton,
-        PopoverPanel,
         Aside,
         Dialog,
         DialogPanel,
         DialogTitle,
         DialogDescription,
+        Menu,
+        MenuButton,
+        MenuItems,
+        MenuItem,
     },
 
     props: {},
@@ -546,7 +531,7 @@ export default {
             })
                 .then((res) => {
                     this.users.forEach((user, index) => {
-                        if(this.selected_users.includes(user.id)) {
+                        if (this.selected_users.includes(user.id)) {
                             this.users.splice(index, 1);
                         }
                     });

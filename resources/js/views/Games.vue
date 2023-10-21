@@ -7,47 +7,34 @@
                 class="relative overflow-x-auto overflow-y-clip shadow-md sm:rounded-lg p-8 border"
             >
                 <div
-                    class="flex items-center justify-between pb-4 bg-white dark:bg-gray-900"
+                    class="flex items-center justify-between pb-4 bg-white"
                 >
-                    <Popover class="relative">
-                        <PopoverButton
+                    <Menu>
+                        <MenuButton
                             class="text-white bg-indigo-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center"
-                            >Actions
-                            <svg
-                                class="w-4 h-4 ml-2"
-                                aria-hidden="true"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M19 9l-7 7-7-7"
-                                ></path>
-                            </svg>
-                        </PopoverButton>
-                        <PopoverPanel
-                            class="z-10 bg-white absolute mt-2 divide-y divide-gray-100 shadow w-56"
+                            >Action</MenuButton
                         >
-                            <div class="py-2 text-sm text-gray-700 z-10">
+                        <MenuItems class="z-10 bg-white absolute mt-32 divide-y divide-gray-100 shadow w-56">
+                            <MenuItem>
                                 <a
+                                    class="block px-4 py-2 cursor-pointer hover:bg-indigo-50"
+                                    role="button"
                                     @click="modal.addGames = true"
-                                    role="button"
-                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
-                                    >Add Games</a
                                 >
+                                Add Games
+                                </a>
+                            </MenuItem>
+                            <MenuItem>
                                 <a
                                     role="button"
-                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
+                                    class="block px-4 py-2 cursor-pointer hover:bg-indigo-50"
                                     @click="deleteGames"
                                     >Delete Games</a
                                 >
-                            </div>
-                        </PopoverPanel>
-                    </Popover>
+                            </MenuItem>
+                        </MenuItems>
+                    </Menu>
+
                     <label for="table-search-games" class="sr-only"
                         >Search</label
                     >
@@ -56,7 +43,7 @@
                             class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
                         >
                             <svg
-                                class="w-5 h-5 text-gray-500 dark:text-gray-400"
+                                class="w-5 h-5 text-gray-500"
                                 aria-hidden="true"
                                 fill="currentColor"
                                 viewBox="0 0 20 20"
@@ -72,17 +59,17 @@
                         <input
                             type="text"
                             id="table-search-games"
-                            class="block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            class="block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
                             placeholder="Search games"
                             @keyup="searchGames"
                         />
                     </div>
                 </div>
                 <table
-                    class="w-full text-sm text-left text-gray-500 dark:text-gray-400"
+                    class="w-full text-sm text-left text-gray-500"
                 >
                     <thead
-                        class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+                        class="text-xs text-gray-700 uppercase bg-gray-50"
                     >
                         <tr>
                             <th scope="col" class="p-4">
@@ -92,7 +79,7 @@
                                         ref="checkbox_all"
                                         @change="selectAll"
                                         type="checkbox"
-                                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
                                     />
                                     <label for="checkbox-all" class="sr-only"
                                         >checkbox</label
@@ -106,7 +93,7 @@
                     </thead>
                     <tbody>
                         <tr
-                            class="bg-white border-b items-center dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                            class="bg-white border-b items-center hover:bg-gray-50"
                             v-for="game in games"
                             :key="game.id"
                         >
@@ -117,7 +104,7 @@
                                         :value="game.id"
                                         :id="game.id"
                                         type="checkbox"
-                                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
                                     />
                                     <label :for="game.id" class="sr-only"
                                         >checkbox</label
@@ -136,7 +123,7 @@
                             </td>
                             <td class="px-6 py-4">
                                 <button
-                                    class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                                    class="font-medium text-blue-600"
                                     @click="
                                         setEditModal(true),
                                             (form.editGames.data = game)
@@ -230,13 +217,13 @@
                             >
                                 <label
                                     for="dropzone-file"
-                                    class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+                                    class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
                                 >
                                     <div
                                         class="flex flex-col items-center justify-center pt-5 pb-6"
                                     >
                                         <svg
-                                            class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
+                                            class="w-8 h-8 mb-4 text-gray-500"
                                             aria-hidden="true"
                                             xmlns="http://www.w3.org/2000/svg"
                                             fill="none"
@@ -251,14 +238,14 @@
                                             />
                                         </svg>
                                         <p
-                                            class="mb-2 text-sm text-gray-500 dark:text-gray-400"
+                                            class="mb-2 text-sm text-gray-500"
                                         >
                                             <span class="font-semibold"
                                                 >Click to upload</span
                                             >
                                         </p>
                                         <p
-                                            class="text-xs text-gray-500 dark:text-gray-400"
+                                            class="text-xs text-gray-500"
                                         >
                                             PNG or JPG
                                         </p>
@@ -283,7 +270,6 @@
                                     class="w-full h-64 border border-indigo-700 rounded"
                                 />
                             </div>
-
                         </div>
 
                         <div class="flex flex-row gap-4 justify-center">
@@ -394,22 +380,6 @@
                                 ref="game_image"
                             />
                         </div>
-
-                        <!-- <div class="absolute left-1/2 top-1/2">
-                            <a
-                                role="button"
-                                @click="this.$refs.change_image.click()"
-                                ><i
-                                    class="fa-regular fa-pen-to-square text-indigo-700 fa-2x"
-                                ></i
-                            ></a>
-                            <input
-                                type="file"
-                                ref="change_image"
-                                @change="updateGameImage"
-                                class="hidden"
-                            />
-                        </div> -->
                     </div>
 
                     <div class="flex justify-center mb-4">
@@ -451,13 +421,14 @@
 </template>
 <script>
 import {
-    Popover,
-    PopoverButton,
-    PopoverPanel,
     Dialog,
     DialogPanel,
     DialogTitle,
     DialogDescription,
+    Menu,
+    MenuButton,
+    MenuItems,
+    MenuItem,
 } from "@headlessui/vue";
 import Aside from "../components/Aside.vue";
 import { userStore } from "../stores/userStore";
@@ -494,14 +465,15 @@ export default {
     },
 
     components: {
-        Popover,
-        PopoverButton,
-        PopoverPanel,
         Dialog,
         DialogPanel,
         DialogTitle,
         DialogDescription,
         Aside,
+        Menu,
+        MenuButton,
+        MenuItems,
+        MenuItem,
     },
 
     props: {},
@@ -546,7 +518,6 @@ export default {
                     },
                 })
                 .then((res) => {
-
                     this.games.unshift(res.data);
                     // this.games = res.data;
 
@@ -623,7 +594,7 @@ export default {
                 .then((res) => {
                     // this.games = res.data;
                     this.games.forEach((game, index) => {
-                        if(this.selected_games.includes(game.id)) {
+                        if (this.selected_games.includes(game.id)) {
                             this.games.splice(index, 1);
                         }
                     });
@@ -658,7 +629,7 @@ export default {
                 })
                 .then((res) => {
                     this.games.map((game, index) => {
-                        if(game.id == this.form.editGames.data.id) {
+                        if (game.id == this.form.editGames.data.id) {
                             this.games[index] = res.data;
                         }
                     });
@@ -669,8 +640,6 @@ export default {
                     this.form.editGames.genre = "";
                     this.form.editGames.trailer_link = "";
                     this.form.editGames.rating = "";
-
-
                 })
                 .catch((err) => {
                     console.log(err.response.data.message);

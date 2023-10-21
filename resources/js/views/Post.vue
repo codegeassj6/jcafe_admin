@@ -5,18 +5,16 @@
         <div class="md:ml-64 ml-16 xl:max-w-7xl pt-20 px-4">
             <div class="mb-4">
                 <div
-                    class="w-full mb-4 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600"
+                    class="w-full mb-4 border border-gray-200 rounded-lg bg-gray-50"
                 >
-                    <div
-                        class="px-4 py-2 bg-white rounded-t-lg dark:bg-gray-800"
-                    >
+                    <div class="px-4 py-2 bg-white rounded-t-lg">
                         <label for="comment" class="sr-only"
                             >Your comment</label
                         >
                         <textarea
                             id="comment"
                             rows="8"
-                            class="w-full mb-2 px-0 text-sm text-gray-900 bg-white border-0 focus:outline-none dark:bg-gray-800 focus:ring-0 dark:text-white dark:placeholder-gray-400"
+                            class="w-full mb-2 px-0 text-sm text-gray-900 bg-white border-0 focus:outline-none"
                             placeholder="Write a comment..."
                             required
                             v-model="form.post.message"
@@ -70,13 +68,13 @@
                         </div>
                     </div>
                     <div
-                        class="flex items-center justify-between px-3 py-2 border-t dark:border-gray-600"
+                        class="flex items-center justify-between px-3 py-2 border-t"
                     >
                         <div class="flex pl-0 space-x-1 sm:pl-2">
                             <div>
                                 <button
                                     type="button"
-                                    class="inline-flex justify-center p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+                                    class="inline-flex justify-center p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100"
                                     @click="initAttachFile"
                                 >
                                     <svg
@@ -106,7 +104,7 @@
                         <button
                             type="button"
                             @click="createPost"
-                            class="inline-flex items-center py-1 px-12 font-medium text-center text-white bg-indigo-700 rounded-lg focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-900 hover:bg-indigo-600"
+                            class="inline-flex items-center py-1 px-12 font-medium text-center text-white bg-indigo-700 rounded-lg focus:ring-4 focus:ring-blue-200 hover:bg-indigo-600"
                         >
                             Post
                         </button>
@@ -139,7 +137,7 @@
                     <div class="ms-auto">
                         <Popover class="relative">
                             <PopoverButton
-                                class="w-8 h-8 hover:bg-indigo-50 hover:rounded-full"
+                                class="w-8 h-8"
                                 ><i class="fa-solid fa-ellipsis-vertical"></i
                             ></PopoverButton>
 
@@ -306,22 +304,42 @@
                     </div>
                     <div class="text-indigo-700 flex flex-row gap-1">
                         <span><i class="fa-regular fa-comments"></i></span>
-                        <span>{{
-                            post.comment_counts
-                        }}</span>
+                        <span>{{ post.comment_counts }}</span>
                         <span v-if="post.comment_counts < 2">comment</span>
                         <span v-else>Comments</span>
                     </div>
-                    <div class="ms-auto">
-                        <button
-                            class="inline-flex text-white bg-indigo-700 border-0 py-0.5 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg"
-                        >
-                            Latest comments
-                        </button>
+                    <div class="ms-auto relative" v-if="post.comment_counts > 1">
+                        <Menu>
+                            <MenuButton class="text-indigo-700"
+                                >Latest Comments
+                                <i class="fa-solid fa-caret-down"></i
+                            ></MenuButton>
+                            <MenuItems
+                                class="z-10 bg-white absolute mt-2 divide-y right-0 divide-gray-100 shadow w-56"
+                            >
+                                <MenuItem>
+                                    <a
+                                        class="block px-4 py-2 cursor-pointer font-weight-bold hover:bg-indigo-50"
+                                        role="button"
+                                        @click="sortLatestComments"
+                                    >
+                                        Latest Comments
+                                    </a>
+                                </MenuItem>
+                                <MenuItem>
+                                    <a
+                                        role="button"
+                                        class="block px-4 py-2 cursor-pointer hover:bg-indigo-50"
+                                        @click="sortOldComments"
+                                        >Old Comments</a
+                                    >
+                                </MenuItem>
+                            </MenuItems>
+                        </Menu>
                     </div>
                 </div>
 
-                <Comment :post="post" />
+                <Comment :post="post" :sort="data_pass.post.sort" />
             </div>
         </div>
 
@@ -370,6 +388,7 @@
 import Aside from "../components/Aside.vue";
 import { userStore } from "../stores/userStore";
 import Comment from "../components/Comment.vue";
+
 import {
     Popover,
     PopoverButton,
@@ -378,12 +397,21 @@ import {
     DialogPanel,
     DialogTitle,
     DialogDescription,
+    Menu,
+    MenuButton,
+    MenuItems,
+    MenuItem,
 } from "@headlessui/vue";
 
 export default {
     data() {
         return {
             posts: "",
+            data_pass: {
+                post: {
+                    sort: "latest",
+                },
+            },
             form: {
                 post: {
                     attachments: {
@@ -415,7 +443,6 @@ export default {
     },
     components: {
         Aside,
-        Comment,
         Popover,
         PopoverButton,
         PopoverPanel,
@@ -423,6 +450,11 @@ export default {
         DialogPanel,
         DialogTitle,
         DialogDescription,
+        Comment,
+        Menu,
+        MenuButton,
+        MenuItems,
+        MenuItem,
     },
 
     props: {},
@@ -430,6 +462,14 @@ export default {
     computed: {},
 
     methods: {
+        sortLatestComments() {
+            this.data_pass.post.sort = 'latest';
+        },
+
+        sortOldComments() {
+            this.data_pass.post.sort = 'oldest';
+        },
+
         deletePost(post) {
             const AuthStr = "Bearer ".concat(userStore().user.access_token);
             axios({
@@ -442,10 +482,10 @@ export default {
             })
                 .then((res) => {
                     this.posts.forEach((post_each, index) => {
-                        if(post_each.id == post.id) {
+                        if (post_each.id == post.id) {
                             this.posts.splice(index, 1);
                         }
-                    })
+                    });
                 })
                 .catch((err) => {
                     console.log(err.response);

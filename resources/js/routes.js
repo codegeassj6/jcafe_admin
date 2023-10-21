@@ -43,14 +43,21 @@ const routes = [
         path: "/games",
         name: "Games",
         component: () =>
-            import(/* webpackChunkName: "Post" */ "./views/Games.vue"),
+            import(/* webpackChunkName: "Games" */ "./views/Games.vue"),
         meta: { requiresAuth: true },
     },
     {
         path: "/orders",
         name: "Orders",
         component: () =>
-            import(/* webpackChunkName: "Post" */ "./views/Orders.vue"),
+            import(/* webpackChunkName: "Orders" */ "./views/Orders.vue"),
+        meta: { requiresAuth: true },
+    },
+    {
+        path: "/products",
+        name: "Products",
+        component: () =>
+            import(/* webpackChunkName: "Products" */ "./views/Products.vue"),
         meta: { requiresAuth: true },
     },
 ];

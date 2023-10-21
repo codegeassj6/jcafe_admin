@@ -6,16 +6,23 @@ use Illuminate\Http\Request;
 use App\Models\Comment;
 use Validator;
 use Auth;
-use App\Models\Post;
 
 class CommentController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index($id)
+    public function index(Request $request, $id)
     {
-        $comments = Comment::where('post_id', $id)->orderByDesc('created_at')->paginate(3);
+        if($request->input('sort') == 'oldest') {
+            $comments = Comment::where('post_id', $id)->orderBy('created_at', 'asc')->paginate(3);
+        } else {
+            $comments = Comment::where('post_id', $id)->orderBy('created_at', 'desc')->paginate(3);
+        }
+
+
+
+
         foreach($comments as $comment) {
             $comment->getLikes;
             if ($comment->getLikes) {
@@ -68,9 +75,26 @@ class CommentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $post_id)
     {
-        return $request->all();
+        $comment = Comment::whereId($request->input('comment_id'))->where('user_id', Auth::id())->firstOrFail();
+        $validator = Validator::make($request->all(), [
+            'message' => 'string|required'
+        ]);
+
+        if($validator->fails()) {
+            return response()->json(['message' => $validator->messages()->get('*')], 500);
+        }
+
+        $comment->message = $request->input('message');
+        $comment->save();
+        if ($comment->getLikes) {
+            $comment->authLikes = $comment->getLikes->where('user_id', Auth::id())->first() ? 1 : 0;
+        } else {
+            $comment->authLikes = 0;
+        }
+
+        return $comment;
     }
 
     /**

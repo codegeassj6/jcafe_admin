@@ -22,36 +22,34 @@
                         {{ comment.message }}
                     </p>
                 </div>
-                <div class="ms-auto">
-                    <Popover class="relative">
-                        <PopoverButton
+                <div class="ms-auto relative">
+                    <Menu>
+                        <MenuButton
                             class="w-8 h-8 hover:bg-indigo-50 hover:rounded-full"
                             ><i class="fa-solid fa-ellipsis-vertical"></i
-                        ></PopoverButton>
-
-                        <PopoverPanel
-                            class="absolute right-0 z-10 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                        ></MenuButton>
+                        <MenuItems
+                            class="z-10 bg-white absolute mt-2 right-0 divide-y divide-gray-100 shadow w-56"
                         >
-                            <div class="flex flex-col gap-1">
-                                <div class="w-full">
-                                    <a
-                                        role="button"
-                                        class="hover:bg-indigo-50 block px-2 py-1"
-                                        @click="editComment(comment)"
-                                        >Edit</a
-                                    >
-                                </div>
-                                <div class="w-full">
-                                    <a
-                                        role="button"
-                                        class="hover:bg-indigo-50 block px-2 py-1"
-                                        @click="deleteComment(comment)"
-                                        >Delete</a
-                                    >
-                                </div>
-                            </div>
-                        </PopoverPanel>
-                    </Popover>
+                            <MenuItem>
+                                <a
+                                    class="block px-4 py-2 cursor-pointer hover:bg-indigo-50"
+                                    role="button"
+                                    @click="initEditComment(comment)"
+                                >
+                                    Edit
+                                </a>
+                            </MenuItem>
+                            <MenuItem>
+                                <a
+                                    role="button"
+                                    class="block px-4 py-2 cursor-pointer hover:bg-indigo-50"
+                                    @click="deleteComment(comment)"
+                                    >Delete</a
+                                >
+                            </MenuItem>
+                        </MenuItems>
+                    </Menu>
                 </div>
             </div>
             <div class="text-indigo-700">
@@ -82,7 +80,7 @@
                 contenteditable="true"
                 :id="'comment_message_' + post.id"
             ></div>
-            <div>
+            <div v-if="!form.comment.edit.data">
                 <button
                     class="inline-flex text-white bg-indigo-700 border-0 py-3 rounded px-6 focus:outline-none hover:bg-indigo-600 text-lg"
                     @click="storeComment(post.id)"
@@ -91,11 +89,33 @@
                 </button>
             </div>
         </div>
+
+        <div
+            class="flex flex-row-reverse mx-4 gap-2 mb-4"
+            v-if="form.comment.edit.data"
+        >
+            <div>
+                <button
+                    class="inline-flex text-white bg-red-700 border-0 py-0.5 rounded px-4 focus:outline-none hover:bg-red-600 text-lg"
+                    @click="cancelEdit(post.id)"
+                >
+                    Cancel
+                </button>
+            </div>
+            <div>
+                <button
+                    class="inline-flex text-white bg-indigo-700 border-0 py-0.5 rounded px-4 focus:outline-none hover:bg-indigo-600 text-lg"
+                    @click="updateComment"
+                >
+                    Update
+                </button>
+            </div>
+        </div>
     </div>
 </template>
 <script>
 import { userStore } from "../stores/userStore";
-import { Popover, PopoverButton, PopoverPanel } from "@headlessui/vue";
+import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
 
 export default {
     data() {
@@ -103,72 +123,130 @@ export default {
             comments: "",
             collection: {
                 comments_id: [],
-            }
+            },
+            form: {
+                comment: {
+                    edit: {
+                        data: "",
+                    },
+                },
+            },
         };
     },
     components: {
-        Popover,
-        PopoverButton,
-        PopoverPanel,
+        Menu,
+        MenuButton,
+        MenuItems,
+        MenuItem,
     },
 
     props: {
         post: {
             type: Object,
         },
+        sort: {
+            type: String,
+        }
     },
 
     computed: {
-        commentIds() {
-
-        },
+        commentIds() {},
     },
 
     methods: {
-
-
-        editComment(comment) {
-            var input = document.getElementById(`comment_message_${comment.post_id}`);
-            console.log(`comment_message_${comment.post_id}`);
-            input.innerHTML = comment.message;
+        cancelEdit(post_id) {
+            this.form.comment.edit.data = "";
+            document.getElementById(`comment_message_${post_id}`).textContent =
+                "";
         },
 
-        updateComment(comment) {
-            const AuthStr = 'Bearer '.concat(userStore().user.access_token);
-            axios({
-                method: 'patch',
-                params: {comment_id: comment.id},
-                url: `/api/posts/${comment.post_id}/comment`,
-                headers: {Authorization: AuthStr}
-            }).then(res => {
-                console.log(res.data);
-            }).catch(err => {
+        initEditComment(comment) {
+            var input = document.getElementById(
+                `comment_message_${comment.post_id}`
+            );
+            input.innerHTML = comment.message;
+            this.form.comment.edit.data = comment;
+        },
 
-            });
+        updateComment() {
+            if (this.form.comment.edit.data) {
+                const AuthStr = "Bearer ".concat(userStore().user.access_token);
+                axios({
+                    method: "patch",
+                    params: {
+                        comment_id: this.form.comment.edit.data.id,
+                        message: document.getElementById(
+                            `comment_message_${this.form.comment.edit.data.post_id}`
+                        ).textContent,
+                    },
+                    url: `/api/posts/${this.form.comment.edit.data.post_id}/comment`,
+                    headers: { Authorization: AuthStr },
+                })
+                    .then((res) => {
+                        this.comments.data.forEach((comment, index) => {
+                            if (comment.id == this.form.comment.edit.data.id) {
+                                comment.message = res.data.message;
+                            }
+                        });
+                        document.getElementById(
+                            `comment_message_${this.form.comment.edit.data.post_id}`
+                        ).textContent = "";
+                        this.form.comment.edit.data = "";
+                    })
+                    .catch((err) => {
+                        console.log(err.response);
+                    });
+            }
+        },
+
+        storeComment(id) {
+            const AuthStr = "Bearer ".concat(userStore().user.access_token);
+            axios({
+                method: "post",
+                params: {
+                    message: document.getElementById(`comment_message_${id}`)
+                        .textContent,
+                },
+                url: `/api/posts/${id}/comment`,
+                headers: { Authorization: AuthStr },
+            })
+                .then((res) => {
+                    this.comments.data.push(res.data);
+                    this.collection.comments_id.push(res.data.id);
+                    this.post.comment_counts++;
+                    document.getElementById(
+                        `comment_message_${id}`
+                    ).textContent = "";
+                })
+                .catch((err) => {
+                    console.log(err.response);
+                });
         },
 
         deleteComment(comment) {
-            const AuthStr = 'Bearer '.concat(userStore().user.access_token);
+            const AuthStr = "Bearer ".concat(userStore().user.access_token);
             axios({
-                method: 'delete',
-                params: {comment_id: comment.id},
+                method: "delete",
+                params: { comment_id: comment.id },
                 url: `/api/posts/${comment.post_id}/comment`,
-                headers: {Authorization: AuthStr}
-            }).then(res => {
-                this.collection.comments_id.forEach((id, index) => {
-                   if(id == comment.id) {
-                       this.collection.comments_id.splice(index, 1);
-                   }
+                headers: { Authorization: AuthStr },
+            })
+                .then((res) => {
+                    this.collection.comments_id.forEach((id, index) => {
+                        if (id == comment.id) {
+                            this.collection.comments_id.splice(index, 1);
+                        }
+                    });
+                    this.comments.data.forEach((data, index) => {
+                        if (data.id == comment.id) {
+                            this.comments.data.splice(index, 1);
+                        }
+                    });
+                    this.post.comment_counts--;
+                })
+                .catch((err) => {
+                    console.log(err.response.data.message);
                 });
-                this.comments.data.forEach((data, index) => {
-                    if(data.id == comment.id) {
-                        this.comments.data.splice(index, 1);
-                    }
-                });
-                this.post.comment_counts--;
-            }).catch(err => {
-                console.log(err.response.data.message);
-            });
         },
 
         storeLike(comment) {
@@ -196,12 +274,12 @@ export default {
                 });
         },
 
-        commentNextPage(comments) {
+        commentNextPage(comments) {console.log(comments.next_page_url);
             if (comments.next_page_url) {
                 const AuthStr = "Bearer ".concat(userStore().user.access_token);
                 axios({
                     method: "get",
-                    params: { id: 1 },
+                    params: { id: 1, sort: this.sort },
                     url: `${comments.next_page_url}`,
                     headers: { Authorization: AuthStr },
                 })
@@ -209,7 +287,9 @@ export default {
                         this.comments.current_page = res.data.current_page;
                         this.comments.next_page_url = res.data.next_page_url;
                         res.data.data.forEach((data) => {
-                            if(!this.collection.comments_id.includes(data.id)) {
+                            if (
+                                !this.collection.comments_id.includes(data.id)
+                            ) {
                                 this.comments.data.push(data);
                                 this.collection.comments_id.push(data.id);
                             }
@@ -221,48 +301,33 @@ export default {
             }
         },
 
-        getComments() {
+        getComments(sort, condition) {
+            // condition is boolean, reset comments if true to avoid missing comment paginated data
             const AuthStr = "Bearer ".concat(userStore().user.access_token);
             axios({
                 method: "get",
+                params: {
+                    sort: sort,
+                },
                 url: `/api/posts/${this.post.id}/comment`,
                 headers: { Authorization: AuthStr },
             })
                 .then((res) => {
                     this.comments = res.data;
+                    if(condition) {
+                        this.collection.comments_id = [];
+                    }
                     this.comments.data.forEach((comment) => {
-                        if(!this.collection.comments_id.includes(comment.id)) {
+                        if (!this.collection.comments_id.includes(comment.id)) {
                             this.collection.comments_id.push(comment.id);
                         }
                     });
+
                     this.post.comment_counts = this.comments.total;
+
                 })
                 .catch((err) => {
                     console.log(err.response.data.message);
-                });
-        },
-
-        storeComment(id) {
-            const AuthStr = "Bearer ".concat(userStore().user.access_token);
-            axios({
-                method: "post",
-                params: {
-                    message: document.getElementById(`comment_message_${id}`)
-                        .textContent,
-                },
-                url: `/api/posts/${id}/comment`,
-                headers: { Authorization: AuthStr },
-            })
-                .then((res) => {
-                    this.comments.data.unshift(res.data);
-                    this.collection.comments_id.push(res.data.id);
-                    this.post.comment_counts++;
-                    document.getElementById(
-                        `comment_message_${id}`
-                    ).textContent = "";
-                })
-                .catch((err) => {
-                    console.log(err.response);
                 });
         },
     },
@@ -276,13 +341,14 @@ export default {
         },
 
         $props: {
-            handler: function (val, oldVal) {
-                console.log("watcher: ", val);
+            handler: function (newVal, oldVal) {
+
             },
             deep: true,
+            immediate: true,
         },
-        some_prop: function () {
-            //do something if some_prop updated
+        sort: function (newVal, oldVal) {
+            this.getComments(newVal, true);
         },
     },
 

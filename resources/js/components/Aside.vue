@@ -28,6 +28,11 @@
                   </router-link>
                 </div>
                 <div class="">
+                  <router-link to="/products" class="w-full flex text-xl flex-row items-center gap-2 text-white border-0 py-4 px-4 focus:outline-none hover:bg-indigo-600">
+                    <i class="fa-solid fa-cart-shopping"></i> <span class="hidden md:block">Products</span>
+                  </router-link>
+                </div>
+                <div class="">
                   <router-link to="/orders" class="w-full flex text-xl flex-row items-center gap-2 text-white border-0 py-4 px-4 focus:outline-none hover:bg-indigo-600">
                     <i class="fa-solid fa-cart-shopping"></i> <span class="hidden md:block">Orders</span>
                   </router-link>
