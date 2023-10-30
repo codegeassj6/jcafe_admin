@@ -94,7 +94,7 @@
                     <tbody>
                         <tr
                             class="bg-white border-b items-center hover:bg-gray-50"
-                            v-for="game in games"
+                            v-for="game in games.data"
                             :key="game.id"
                         >
                             <td class="w-4 p-4">
@@ -135,6 +135,9 @@
                         </tr>
                     </tbody>
                 </table>
+
+                <Pagination :data="games" />
+
             </div>
         </div>
 
@@ -432,6 +435,7 @@ import {
 } from "@headlessui/vue";
 import Aside from "../components/Aside.vue";
 import { userStore } from "../stores/userStore";
+import Pagination from "../components/Pagination.vue";
 
 export default {
     data() {
@@ -474,6 +478,7 @@ export default {
         MenuButton,
         MenuItems,
         MenuItem,
+        Pagination,
     },
 
     props: {},
@@ -481,6 +486,45 @@ export default {
     computed: {},
 
     methods: {
+        nextPage(url) {
+            const AuthStr = 'Bearer '.concat(userStore().user.access_token);
+            axios({
+                method: 'get',
+                url: url,
+                headers: {Authorization: AuthStr}
+            }).then(res => {
+                this.games = res.data;
+            }).catch(err => {
+
+            });
+        },
+
+        prevPage(url) {
+            const AuthStr = 'Bearer '.concat(userStore().user.access_token);
+            axios({
+                method: 'get',
+                url: url,
+                headers: {Authorization: AuthStr}
+            }).then(res => {
+                this.games = res.data;
+            }).catch(err => {
+
+            });
+        },
+
+        goToPage(url, page) {console.log('click');
+            const AuthStr = 'Bearer '.concat(userStore().user.access_token);
+            axios({
+                method: 'get',
+                url: `${url}?page=${page}`,
+                headers: {Authorization: AuthStr}
+            }).then(res => {
+                this.games = res.data;
+            }).catch(err => {
+
+            });
+        },
+
         setEditModal(condition) {
             this.modal.editGames = condition;
         },
@@ -518,8 +562,7 @@ export default {
                     },
                 })
                 .then((res) => {
-                    this.games.unshift(res.data);
-                    // this.games = res.data;
+                    this.games.data.unshift(res.data);
 
                     this.modal.addGames = false;
                     this.form.addGames.name = "";
@@ -561,7 +604,7 @@ export default {
                     headers: { Authorization: AuthStr },
                 })
                     .then((res) => {
-                        this.games = res.data;
+                        this.games.data = res.data;
                     })
                     .catch((err) => {});
             } else {
@@ -593,9 +636,9 @@ export default {
             })
                 .then((res) => {
                     // this.games = res.data;
-                    this.games.forEach((game, index) => {
+                    this.games.data.forEach((game, index) => {
                         if (this.selected_games.includes(game.id)) {
-                            this.games.splice(index, 1);
+                            this.games.data.splice(index, 1);
                         }
                     });
 
@@ -628,9 +671,9 @@ export default {
                     },
                 })
                 .then((res) => {
-                    this.games.map((game, index) => {
+                    this.games.data.map((game, index) => {
                         if (game.id == this.form.editGames.data.id) {
-                            this.games[index] = res.data;
+                            this.games.data[index] = res.data;
                         }
                     });
 

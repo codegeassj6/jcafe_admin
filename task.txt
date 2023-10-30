@@ -1,2 +1,11 @@
 Task:
+update product
+product star
+
+post pagination when scroll
+
 messages
+
+Error:
+update users without password
+

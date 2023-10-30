@@ -61,6 +61,14 @@ Route::group(['prefix' => 'games', 'middleware' => 'auth'], function ($router) {
     Route::delete('/', 'App\Http\Controllers\GameController@destroy');
 })->middleware('auth');
 
+Route::group(['prefix' => 'products', 'middleware' => 'auth'], function ($router) {
+    Route::get('/', 'App\Http\Controllers\ProductController@index');
+    Route::post('/', 'App\Http\Controllers\ProductController@store');
+    Route::post('/update', 'App\Http\Controllers\ProductController@update');
+    Route::delete('/', 'App\Http\Controllers\ProductController@destroy');
+})->middleware('auth');
+
+
 Route::group(['prefix' => 'orders'], function ($router) {
     Route::get('/', 'App\Http\Controllers\OrderController@index');
 })->middleware('auth');

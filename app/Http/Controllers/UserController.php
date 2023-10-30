@@ -14,7 +14,7 @@ class UserController extends Controller
    */
   public function index()
   {
-    $user = User::orderBy('created_at', 'desc')->get();
+    $user = User::orderBy('created_at', 'desc')->paginate(10);
 
     return $user;
   }
@@ -82,7 +82,8 @@ class UserController extends Controller
         'first_name' => 'string|nullable|min:2|max:20',
         'last_name' => 'string|nullable|min:2|max:20',
         'email' => 'email:rfc,dns|nullable',
-        'password' => 'nullable|sometimes|string',
+        // 'password' => 'nullable|sometimes|string',
+        'password' => 'nullable|string',
         'confirm_password' => 'same:password',
         'address' => 'max:30|nullable',
         'contact' => 'integer|nullable|',

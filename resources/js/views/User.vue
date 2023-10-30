@@ -60,7 +60,7 @@
                         />
                     </div>
                 </div>
-                <table class="w-full text-sm text-left text-gray-500">
+                <table class="w-full text-sm text-left text-gray-500 mb-4">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                         <tr>
                             <th scope="col" class="p-4">
@@ -87,7 +87,7 @@
                     <tbody>
                         <tr
                             class="bg-white border-b items-center"
-                            v-for="user in users"
+                            v-for="user in users.data"
                             :key="user.id"
                         >
                             <td class="w-4 p-4">
@@ -136,6 +136,8 @@
                         </tr>
                     </tbody>
                 </table>
+
+                <Pagination :data="users" />
             </div>
         </div>
 
@@ -467,6 +469,7 @@
 <script>
 import Aside from "../components/Aside.vue";
 import { userStore } from "../stores/userStore";
+import Pagination from "../components/Pagination.vue";
 
 import {
     Dialog,
@@ -514,6 +517,7 @@ export default {
         MenuButton,
         MenuItems,
         MenuItem,
+        Pagination,
     },
 
     props: {},
@@ -521,6 +525,45 @@ export default {
     computed: {},
 
     methods: {
+        nextPage(url) {
+            const AuthStr = 'Bearer '.concat(userStore().user.access_token);
+            axios({
+                method: 'get',
+                url: url,
+                headers: {Authorization: AuthStr}
+            }).then(res => {
+                this.users = res.data;
+            }).catch(err => {
+
+            });
+        },
+
+        prevPage(url) {
+            const AuthStr = 'Bearer '.concat(userStore().user.access_token);
+            axios({
+                method: 'get',
+                url: url,
+                headers: {Authorization: AuthStr}
+            }).then(res => {
+                this.users = res.data;
+            }).catch(err => {
+
+            });
+        },
+
+        goToPage(url, page) {
+            const AuthStr = 'Bearer '.concat(userStore().user.access_token);
+            axios({
+                method: 'get',
+                url: `${url}?page=${page}`,
+                headers: {Authorization: AuthStr}
+            }).then(res => {
+                this.users = res.data;
+            }).catch(err => {
+
+            });
+        },
+
         deleteUser() {
             const AuthStr = "Bearer ".concat(userStore().user.access_token);
             axios({
@@ -530,9 +573,9 @@ export default {
                 headers: { Authorization: AuthStr },
             })
                 .then((res) => {
-                    this.users.forEach((user, index) => {
+                    this.users.data.forEach((user, index) => {
                         if (this.selected_users.includes(user.id)) {
-                            this.users.splice(index, 1);
+                            this.users.data.splice(index, 1);
                         }
                     });
                     this.selected_users = [];
@@ -562,11 +605,11 @@ export default {
                 },
             })
                 .then((res) => {
-                    this.users.unshift(res.data);
+                    this.users.data.unshift(res.data);
                     this.modal.add = false;
                 })
                 .catch((err) => {
-                    console.log(err.response.data);
+                    console.log(err.response);
                 });
         },
 
@@ -616,9 +659,9 @@ export default {
             })
                 .then((res) => {
                     this.modal.edit = false;
-                    this.users.forEach((user, index) => {
+                    this.users.data.forEach((user, index) => {
                         if (user.id == this.edit_user.id) {
-                            this.users[index] = res.data;
+                            this.users.data[index] = res.data;
                         }
                     });
                     this.edit_user = "";

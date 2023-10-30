@@ -14,7 +14,7 @@ class GameController extends Controller
      */
     public function index()
     {
-        $games = Game::orderBy('created_at', 'desc')->get();
+        $games = Game::orderBy('created_at', 'desc')->paginate(1);
         foreach ($games as $game) {
             $game->image_url = Storage::disk('s3')->url('games/images/' . $game->image);
         }

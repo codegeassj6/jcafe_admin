@@ -20,9 +20,6 @@ class CommentController extends Controller
             $comments = Comment::where('post_id', $id)->orderBy('created_at', 'desc')->paginate(3);
         }
 
-
-
-
         foreach($comments as $comment) {
             $comment->getLikes;
             if ($comment->getLikes) {
