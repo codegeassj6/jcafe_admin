@@ -13,95 +13,10 @@
                     </button>
                 </div>
 
-                <!-- <div
-                    class="border p-4 rounded mb-2"
-                    v-for="product in products.data"
-                    :key="product.id"
-                >
-                    <div class="flex flex-row gap-4">
-                        <div class="w-96 p-1 bg-indigo-50 rounded-lg">
-                            <img
-                                :src="product.image_url"
-                                class="w-full h-40"
-                                alt=""
-                            />
-                        </div>
-                        <div class="w-full flex flex-col">
-                            <div class="text-xl text-indigo-700 font-bold">
-                                {{ product.name }}
-                            </div>
-                            <div class="text-yellow-400">
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star-half mr-2"></i>
-                                <span class="text-indigo-700 font-bold">{{
-                                    product.rating
-                                }}</span>
-                            </div>
-                            <div class="">
-                                {{ product.description }}
-                            </div>
-
-                            <div class="mb-4 text-sm text-gray-400">
-                                Stock: {{ product.stock }}
-                            </div>
-
-                            <div
-                                v-if="product.get_variants.length"
-                                class="flex flex-row gap-2 mt-auto"
-                            >
-                                <div
-                                    v-for="variant in product.get_variants"
-                                    :key="variant.id"
-                                >
-                                    <button
-                                        class="text-white bg-indigo-500 border-0 py-0.5 px-2 focus:outline-none hover:bg-indigo-600 rounded text-lg"
-                                        @click="
-                                            (product.stock = variant.stock),
-                                                (product.price = variant.price)
-                                        "
-                                    >
-                                        {{ variant.value }}{{ variant.unit }}
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div
-                            class="w-60 flex flex-col px-4 col-span-1 border-l border-indigo-700"
-                        >
-                            <h3 class="text-xl">{{ product.price }} Peso</h3>
-
-                            <div class="mt-auto flex flex-col gap-2">
-                                <button
-                                    class="text-white bg-indigo-500 border-0 py-0.5 px-4 focus:outline-none hover:bg-indigo-600 rounded text-lg"
-                                    @click="
-                                        (modal.updateProduct = true),
-                                            (modal.update_data = product)
-                                    "
-                                >
-                                    Update
-                                </button>
-                                <button
-                                    class="text-white bg-red-700 border-0 py-0.5 px-4 focus:outline-none hover:bg-red-600 rounded text-lg"
-                                    @click="
-                                        (modal.deleteProduct = true),
-                                            (modal.delete_data = product)
-                                    "
-                                >
-                                    Delete
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div> -->
-
                 <div
                     class="grid grid-cols-3 gap-2"
                 >
-                    <div class="py-6" v-for="product in products.data"
+                    <div class="mb-4" v-for="product in products.data"
                     :key="product.id">
                         <div
                             class="flex flex-row max-w-md bg-white shadow-lg rounded-lg border overflow-hidden"
@@ -117,7 +32,11 @@
                                     {{ product.name }}
                                 </h1>
 
-                                <p class="mb-2 text-gray-600 text-sm">
+                                <div>
+                                    <Stars :counts="product.rating" />
+                                </div>
+
+                                <p class="text-gray-600 text-sm">
                                     {{ product.description }}
                                 </p>
                                 <div
@@ -228,6 +147,7 @@
                             <div class="w-full">
                                 <input
                                     :id="`variant_value_${variant}`"
+                                    ref="variant_value"
                                     placeholder="Value"
                                     type="number"
                                     min="1"
@@ -239,6 +159,7 @@
                             <div class="w-full">
                                 <input
                                     :id="`variant_unit_${variant}`"
+                                    ref="variant_unit"
                                     placeholder="Unit"
                                     type="text"
                                     class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
@@ -248,6 +169,7 @@
                             <div class="w-full">
                                 <input
                                     :id="`variant_price_${variant}`"
+                                    ref="variant_price"
                                     placeholder="Price"
                                     type="number"
                                     min="1"
@@ -259,6 +181,7 @@
                             <div class="w-full">
                                 <input
                                     type="number"
+                                    ref="variant_stock"
                                     :id="`variant_stock_${variant}`"
                                     placeholder="Stock"
                                     min="1"
@@ -357,6 +280,7 @@
             </DialogPanel>
         </Dialog>
 
+        <!-- update modal -->
         <Dialog
             :open="modal.updateProduct"
             @close="setUpdateProductModal"
@@ -426,6 +350,7 @@
                             <div class="w-full">
                                 <input
                                     :placeholder="variant.value"
+                                    ref="variant_update_value"
                                     type="number"
                                     min="1"
                                     max="5"
@@ -435,6 +360,7 @@
 
                             <div class="w-full">
                                 <input
+                                ref="variant_update_unit"
                                     :placeholder="variant.unit"
                                     type="text"
                                     class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
@@ -443,6 +369,7 @@
 
                             <div class="w-full">
                                 <input
+                                    ref="variant_update_price"
                                     :placeholder="variant.price"
                                     type="number"
                                     min="1"
@@ -454,6 +381,7 @@
                             <div class="w-full">
                                 <input
                                     type="number"
+                                    ref="variant_update_stock"
                                     :placeholder="variant.stock"
                                     min="1"
                                     max="5"
@@ -604,6 +532,7 @@
 </template>
 <script>
 import Pagination from "../components/Pagination.vue";
+import Stars from "../components/Stars.vue";
 import Aside from "../components/Aside.vue";
 import {
     Dialog,
@@ -634,7 +563,7 @@ export default {
                     temp_img: "",
                     variant_count: 1,
                     variant: [1],
-                    variant_details: [],
+                    // variant_details: [],
                     description: "",
                     rating: "",
                 },
@@ -645,9 +574,6 @@ export default {
                     description: "",
                     rating: "",
                     temp_img: "",
-                    // variant_count: 1,
-                    // variant: [1],
-                    // variant_details: [],
                 },
             },
             products: "",
@@ -660,6 +586,7 @@ export default {
         DialogTitle,
         DialogDescription,
         Pagination,
+        Stars,
     },
 
     props: {},
@@ -736,12 +663,29 @@ export default {
         },
 
         updateProduct() {
+            const formData = new FormData();
+            formData.append('name', this.form.updateProduct.name);
+            formData.append('rating', this.form.updateProduct.rating);
+            formData.append('description', this.form.updateProduct.description);
+            formData.append('image', this.form.updateProduct.image);
+
+            this.$refs.variant_update_value.forEach(data => {
+                formData.append('variant_update_value[]', data.value);
+            });
+            this.$refs.variant_update_price.forEach(data => {
+                formData.append('variant_update_price[]', data.value);
+            });
+            this.$refs.variant_update_stock.forEach(data => {
+                formData.append('variant_update_stock[]', data.value);
+            });
+            this.$refs.variant_update_unit.forEach(data => {
+                formData.append('variant_update_unit[]', data.value);
+            });
+
             const AuthStr = "Bearer ".concat(userStore().user.access_token);
             axios({
                 method: "post",
-                params: {
-                    id: 1,
-                },
+                data: formData,
                 url: `/api/products/update`,
                 headers: { Authorization: AuthStr },
             })
@@ -776,51 +720,66 @@ export default {
         },
 
         addProduct() {
-            for (
-                let index = 0;
-                index < this.form.addProduct.variant.length;
-                index++
-            ) {
-                let value = document.getElementById(
-                    `variant_value_${this.form.addProduct.variant[index]}`
-                ).value;
+            // for (
+            //     let index = 0;
+            //     index < this.form.addProduct.variant.length;
+            //     index++
+            // ) {
+            //     let value = document.getElementById(
+            //         `variant_value_${this.form.addProduct.variant[index]}`
+            //     ).value;
 
-                let unit = document.getElementById(
-                    `variant_unit_${this.form.addProduct.variant[index]}`
-                ).value;
+            //     let unit = document.getElementById(
+            //         `variant_unit_${this.form.addProduct.variant[index]}`
+            //     ).value;
 
-                let stock = document.getElementById(
-                    `variant_stock_${this.form.addProduct.variant[index]}`
-                ).value;
+            //     let stock = document.getElementById(
+            //         `variant_stock_${this.form.addProduct.variant[index]}`
+            //     ).value;
 
-                let price = document.getElementById(
-                    `variant_price_${this.form.addProduct.variant[index]}`
-                ).value;
+            //     let price = document.getElementById(
+            //         `variant_price_${this.form.addProduct.variant[index]}`
+            //     ).value;
 
-                if (value && unit && stock) {
-                    this.form.addProduct.variant_details.push({
-                        value: value,
-                        unit: unit,
-                        stock: stock,
-                        price: price,
-                    });
-                }
-            }
+            //     if (value && unit && stock) {
+            //         this.form.addProduct.variant_details.push({
+            //             value: value,
+            //             unit: unit,
+            //             stock: stock,
+            //             price: price,
+            //         });
+            //     }
+            // }
 
             const formData = new FormData();
             formData.append("name", this.form.addProduct.name);
             formData.append("rating", this.form.addProduct.rating);
             formData.append("description", this.form.addProduct.description);
-            // formData.append('variant_details', JSON.stringify(this.form.addProduct.variant_details));
             formData.append("image", this.form.addProduct.image);
+
+            this.$refs.variant_value.forEach(data => {
+               formData.append('variant_value[]', data.value);
+            });
+
+            this.$refs.variant_unit.forEach(data => {
+               formData.append('variant_unit[]', data.value);
+            });
+
+            this.$refs.variant_stock.forEach(data => {
+               formData.append('variant_stock[]', data.value);
+            });
+
+            this.$refs.variant_price.forEach(data => {
+               formData.append('variant_price[]', data.value);
+            });
 
             const AuthStr = "Bearer ".concat(userStore().user.access_token);
             axios({
                 method: "post",
                 data: formData,
-                params: {
-                    variant_details: this.form.addProduct.variant_details,
-                },
+                // params: {
+                //     variant_details: this.form.addProduct.variant_details,
+                // },
                 url: `/api/products`,
                 headers: { Authorization: AuthStr },
             })
@@ -828,7 +787,7 @@ export default {
                     this.form.addProduct.name = "";
                     this.form.addProduct.rating = "";
                     this.form.addProduct.description = "";
-                    this.form.addProduct.variant_details = [];
+                    // this.form.addProduct.variant_details = [];
                     this.form.addProduct.image = "";
                     this.form.addProduct.variant_count = 0;
                     this.form.addProduct.variant = [];

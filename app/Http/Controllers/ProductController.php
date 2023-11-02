@@ -15,7 +15,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::orderBy('created_at', 'desc')->paginate(3);
+        $products = Product::orderBy('created_at', 'desc')->paginate(12);
 
         foreach ($products as $key => $value) {
             $value->image_url = Storage::disk('s3')->url('products/images/' . $value->image);
@@ -40,10 +40,14 @@ class ProductController extends Controller
             'description' => 'string|required|max:50',
             'image' => 'file|required',
             'rating' => 'numeric|required',
-            'variant_details.*.value' => 'numeric|required',
-            'variant_details.*.unit' => 'string|required',
-            'variant_details.*.price' => 'numeric|required',
-            'variant_details.*.stock' => 'numeric|required',
+            // 'variant_details.*.value' => 'numeric|required',
+            // 'variant_details.*.unit' => 'string|required',
+            // 'variant_details.*.price' => 'numeric|required',
+            // 'variant_details.*.stock' => 'numeric|required',
+            'variant_value.*' => 'numeric|required',
+            'variant_unit.*' => 'string|required',
+            'variant_price.*' => 'numeric|required',
+            'variant_stock.*' => 'numeric|required',
         ]);
 
         if ($validator->fails()) {
@@ -57,16 +61,28 @@ class ProductController extends Controller
             'rating' => $request->rating,
         ]);
 
-        for($i = 0;  $i < count($request->input('variant_details')); $i++ ) {
+        // for($i = 0;  $i < count($request->input('variant_details')); $i++ ) {
+        //     ProductVariant::create([
+        //         'product_id' => $product->id,
+        //         'value' => $request->input('variant_details')[$i]['value'],
+        //         'unit' => $request->input('variant_details')[$i]['unit'],
+        //         'price' => $request->input('variant_details')[$i]['price'],
+        //         'stock' => $request->input('variant_details')[$i]['stock'],
+        //         'stripe_api_id' => 4,
+        //     ]);
+        // }
+
+        for($i = 0;  $i < count($request->input('variant_value')); $i++ ) {
             ProductVariant::create([
                 'product_id' => $product->id,
-                'value' => $request->input('variant_details')[$i]['value'],
-                'unit' => $request->input('variant_details')[$i]['unit'],
-                'price' => $request->input('variant_details')[$i]['price'],
-                'stock' => $request->input('variant_details')[$i]['stock'],
+                'value' => $request->input('variant_value')[$i],
+                'unit' => $request->input('variant_unit')[$i],
+                'price' => $request->input('variant_price')[$i],
+                'stock' => $request->input('variant_stock')[$i],
                 'stripe_api_id' => 4,
             ]);
         }
+
 
         Storage::disk('s3')->putFileAs('/products/images', $request->file('image'), $request->file('image')->hashName(), 'public');
         $product->getVariants;

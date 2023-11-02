@@ -1,6 +1,5 @@
 Task:
 update product
-product star
 
 post pagination when scroll
 
